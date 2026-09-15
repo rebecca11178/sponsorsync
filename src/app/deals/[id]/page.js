@@ -48,6 +48,11 @@ export default function DealChatroom() {
 
       <div className="mt-4 rounded-2xl border border-border bg-surface p-5">
         <StatusTimeline current={deal.status} />
+        <div className="mt-4 flex justify-end border-t border-border pt-3">
+          <Link href={`/deals/${deal.id}/performance`} className="text-sm font-medium text-brand hover:underline">
+            View campaign performance →
+          </Link>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">

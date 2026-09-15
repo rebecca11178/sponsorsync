@@ -1,19 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { APP_NAME } from "@/lib/config";
-import { currentSponsor } from "@/lib/mockData";
+import { useAuth } from "@/components/AuthProvider";
 
-const links = [
-  { href: "/creators", label: "Find Creators" },
-  { href: "/match", label: "AI Match" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/creator", label: "Creator View" },
-];
+const LINKS_BY_ROLE = {
+  sponsor: [
+    { href: "/creators", label: "Find Creators" },
+    { href: "/match", label: "AI Match" },
+    { href: "/dashboard", label: "Dashboard" },
+  ],
+  creator: [
+    { href: "/creator", label: "Inbox" },
+    { href: "/creator/profile", label: "My Profile" },
+  ],
+  guest: [
+    { href: "/creators", label: "Find Creators" },
+    { href: "/match", label: "AI Match" },
+  ],
+};
 
 export default function NavBar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  const role = user?.role || "guest";
+  const links = LINKS_BY_ROLE[role];
+
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
@@ -40,12 +54,25 @@ export default function NavBar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          {currentSponsor.verified && (
-            <span className="hidden items-center gap-1 rounded-full bg-success-soft px-2.5 py-1 text-xs font-medium text-success sm:flex">
-              ✓ Verified Sponsor
-            </span>
+          {user ? (
+            <>
+              <span className="hidden items-center gap-1.5 text-sm md:flex">
+                <span>{user.emoji}</span>
+                <span className="font-medium">{user.name}</span>
+                {user.verified && <span className="text-success">✓</span>}
+              </span>
+              <button
+                onClick={() => { logout(); router.push("/"); }}
+                className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted hover:bg-background"
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className="rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark">
+              Log in
+            </Link>
           )}
-          <span className="hidden text-sm text-muted md:inline">{currentSponsor.company}</span>
         </div>
       </div>
     </header>
