@@ -156,6 +156,8 @@ export const deals = [
   {
     id: "d1",
     creatorId: "c1",
+    sponsor: "BrightLeaf Tea Co.",
+    sponsorEmoji: "🍃",
     status: "chatroom", // enquiry → chatroom → contracted → in_production → in_review → completed
     package: "Dedicated video + whitelisting",
     amount: 3300,
@@ -170,12 +172,27 @@ export const deals = [
   {
     id: "d2",
     creatorId: "c3",
+    sponsor: "BrightLeaf Tea Co.",
+    sponsorEmoji: "🍃",
     status: "in_review",
     package: "Integrated video",
     amount: 450,
     messages: [
       { from: "sponsor", text: "Hi Priya — a 60s integration about our caffeine-free tea in your next wind-down video?", time: "09:00" },
       { from: "creator", text: "Perfect fit for my audience. Draft coming your way this week.", time: "09:12" },
+    ],
+  },
+  {
+    id: "d3",
+    creatorId: "c1",
+    sponsor: "NordVibe Audio",
+    sponsorEmoji: "🎧",
+    status: "chatroom",
+    package: "Integrated video (60s)",
+    amount: 1200,
+    messages: [
+      { from: "sponsor", text: "Hi Maya! We'd love a 60s integration of our study headphones in an upcoming wind-down video.", time: "14:20" },
+      { from: "creator", text: "Thanks! I like the fit. What are the must-hit talking points?", time: "14:33" },
     ],
   },
 ];
@@ -205,6 +222,7 @@ export const creatorProfileId = "c1"; // the creator we're "logged in as" for th
 export const enquiries = [
   {
     id: "e1",
+    dealId: "d1",
     sponsor: "BrightLeaf Tea Co.",
     verified: true,
     industry: "DTC Food & Beverage",
@@ -215,6 +233,7 @@ export const enquiries = [
   },
   {
     id: "e2",
+    dealId: "d3",
     sponsor: "NordVibe Audio",
     verified: true,
     industry: "Consumer Electronics",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { enquiries as seed, getCreator, creatorProfileId } from "@/lib/mockData";
 import { compact, usd } from "@/lib/format";
 
@@ -85,7 +86,16 @@ export default function CreatorInbox() {
                   </button>
                 </>
               )}
-              {e.status === "accepted" && <span className="rounded-lg bg-success-soft px-3 py-2 text-sm font-medium text-success">✓ Accepted — chatroom opened</span>}
+              {e.status === "accepted" && (
+                <>
+                  <span className="flex items-center rounded-lg bg-success-soft px-3 py-2 text-sm font-medium text-success">✓ Accepted</span>
+                  {e.dealId && (
+                    <Link href={`/deals/${e.dealId}`} className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
+                      Open chatroom →
+                    </Link>
+                  )}
+                </>
+              )}
               {e.status === "declined" && <span className="rounded-lg bg-background px-3 py-2 text-sm font-medium text-muted">Declined</span>}
             </div>
           </div>

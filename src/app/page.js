@@ -73,9 +73,9 @@ export default function Home() {
       {/* Stats band */}
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
-          {stats.map((s) => (
+          {stats.map((s, i) => (
             <div key={s.label} className="bg-surface p-5">
-              <p className="text-2xl font-semibold text-brand">{s.value}</p>
+              <p className={`text-2xl font-bold ${["text-g-blue", "text-g-red", "text-g-yellow", "text-g-green"][i % 4]}`}>{s.value}</p>
               <p className="mt-1 text-xs text-muted">{s.label}</p>
             </div>
           ))}

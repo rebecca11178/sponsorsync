@@ -1,11 +1,12 @@
-import { Geist } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { AuthProvider } from "@/components/AuthProvider";
 import { APP_NAME, APP_TAGLINE } from "@/lib/config";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const roboto = Roboto({
+  variable: "--font-roboto",
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
 });
 
@@ -16,7 +17,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
+    <html lang="en" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           <NavBar />

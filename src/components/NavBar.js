@@ -31,9 +31,12 @@ export default function NavBar() {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-foreground">
+        <Link href="/" className="flex items-center gap-2.5 font-semibold text-foreground">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-white">S</span>
           <span className="text-lg tracking-tight">{APP_NAME}</span>
+          <span className="hidden rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted md:inline">
+            NYU SPS <span className="text-brand">×</span> Google
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 sm:flex">

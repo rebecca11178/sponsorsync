@@ -6,11 +6,22 @@ import Link from "next/link";
 import { getDeal, getCreator } from "@/lib/mockData";
 import { usd } from "@/lib/format";
 import StatusTimeline from "@/components/StatusTimeline";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function DealChatroom() {
   const { id } = useParams();
+  const { user } = useAuth();
+  const role = user?.role || "sponsor"; // viewer perspective
   const deal = getDeal(id);
   const creator = deal ? getCreator(deal.creatorId) : null;
+
+  // Who the viewer is talking TO (the counterparty).
+  const counterparty =
+    role === "creator"
+      ? { emoji: deal?.sponsorEmoji || "🏢", name: deal?.sponsor || "Brand" }
+      : { emoji: creator?.emoji, name: creator?.name };
+  const backHref = role === "creator" ? "/creator" : "/dashboard";
+  const backLabel = role === "creator" ? "← Back to inbox" : "← Back to dashboard";
 
   const [messages, setMessages] = useState(deal?.messages || []);
   const [draft, setDraft] = useState("");
@@ -22,7 +33,7 @@ export default function DealChatroom() {
   function send(e) {
     e.preventDefault();
     if (!draft.trim()) return;
-    setMessages((m) => [...m, { from: "sponsor", text: draft.trim(), time: "now" }]);
+    setMessages((m) => [...m, { from: role, text: draft.trim(), time: "now" }]);
     setDraft("");
   }
 
@@ -44,7 +55,7 @@ export default function DealChatroom() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <Link href="/dashboard" className="text-sm text-muted hover:text-foreground">← Back to dashboard</Link>
+      <Link href={backHref} className="text-sm text-muted hover:text-foreground">{backLabel}</Link>
 
       <div className="mt-4 rounded-2xl border border-border bg-surface p-5">
         <StatusTimeline current={deal.status} />
@@ -59,21 +70,21 @@ export default function DealChatroom() {
         {/* Chat */}
         <div className="flex h-[540px] flex-col rounded-2xl border border-border bg-surface">
           <div className="flex items-center gap-3 border-b border-border p-4">
-            <div className="grid h-10 w-10 place-items-center rounded-lg bg-brand-soft text-xl">{creator.emoji}</div>
+            <div className="grid h-10 w-10 place-items-center rounded-lg bg-brand-soft text-xl">{counterparty.emoji}</div>
             <div>
-              <p className="font-medium">{creator.name}</p>
+              <p className="font-medium">{counterparty.name}</p>
               <p className="text-xs text-muted">{deal.package} · {usd(deal.amount)}</p>
             </div>
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.from === "sponsor" ? "justify-end" : "justify-start"}`}>
+              <div key={i} className={`flex ${m.from === role ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
-                  m.from === "sponsor" ? "bg-brand text-white" : "bg-background text-foreground"
+                  m.from === role ? "bg-brand text-white" : "bg-background text-foreground"
                 }`}>
                   {m.text}
-                  <span className={`mt-1 block text-[10px] ${m.from === "sponsor" ? "text-white/70" : "text-muted"}`}>{m.time}</span>
+                  <span className={`mt-1 block text-[10px] ${m.from === role ? "text-white/70" : "text-muted"}`}>{m.time}</span>
                 </div>
               </div>
             ))}

@@ -1,20 +1,32 @@
 @import "tailwindcss";
 
+/* NYU SPS × Google palette
+   - Brand: NYU violet (#57068C)
+   - Accents & status: Google Material colors
+   - Type: Roboto (Google) */
 :root {
-  --background: #f7f8fb;
+  --background: #f8f7fb;
   --surface: #ffffff;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --brand: #4f46e5;
-  --brand-dark: #4338ca;
-  --brand-soft: #eef2ff;
-  --success: #16a34a;
-  --success-soft: #dcfce7;
-  --warning: #b45309;
-  --warning-soft: #fef3c7;
-  --danger: #dc2626;
-  --danger-soft: #fee2e2;
+  --foreground: #201a2e;
+  --muted: #6b6580;
+  --border: #e7e3f0;
+
+  --brand: #57068c;        /* NYU violet */
+  --brand-dark: #40056a;
+  --brand-soft: #f3e8fb;
+
+  /* Google accent colors */
+  --g-blue: #4285f4;
+  --g-red: #ea4335;
+  --g-yellow: #f9ab00;
+  --g-green: #34a853;
+
+  --success: #1e8e3e;
+  --success-soft: #e6f4ea;
+  --warning: #b06000;
+  --warning-soft: #fef7e0;
+  --danger: #d93025;
+  --danger-soft: #fce8e6;
 }
 
 @theme inline {
@@ -26,17 +38,21 @@
   --color-brand: var(--brand);
   --color-brand-dark: var(--brand-dark);
   --color-brand-soft: var(--brand-soft);
+  --color-g-blue: var(--g-blue);
+  --color-g-red: var(--g-red);
+  --color-g-yellow: var(--g-yellow);
+  --color-g-green: var(--g-green);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-roboto);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, Arial, sans-serif;
+  font-family: var(--font-roboto), system-ui, Arial, sans-serif;
 }
