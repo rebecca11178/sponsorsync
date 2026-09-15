@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# SponsorSync
 
-## Getting Started
+Prototype for the **NYU SPS × Google Hackathon — Track 2 (Product & Engineering)**.
 
-First, run the development server:
+A B2B **verified sponsor ↔ creator** platform that lets small businesses run YouTube
+creator sponsorships without a marketing team. It packages the things Google's
+Creator Partnerships doesn't do for SMBs: **verified sponsors, transparent pricing,
+and AI-assisted contract & content review.**
+
+> One-line pitch: *Google built the enterprise engine parts. We assemble them into
+> one accessible car for SMBs.*
+
+---
+
+## Run it
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Everything runs on **mock data** today — fully clickable, no API keys needed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## The hero flow (what to demo)
 
-To learn more about Next.js, take a look at the following resources:
+1. **/sponsor/signup** — verify with a company email → "Verified Sponsor" badge
+2. **/creators** — browse creators with transparent rate cards (指定达人 / Xingtu-style)
+3. **/creators/[id]** — build a package (content type + commercial-rights add-ons) → send enquiry
+4. **/match** — or fill a brief and let Gemini rank best-fit creators (AI custom match)
+5. **/deals/[id]** — chatroom → "Summarize with Gemini" turns the chat into clear terms
+6. **/deals/[id]/review** — after delivery: platform compliance check + Gemini order review
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Where teammates plug in APIs + LLM
 
-## Deploy on Vercel
+All the AI/data calls are isolated in **`src/app/api/*`** as mock route handlers.
+Each file has a `TODO(llm)` / `TODO(api)` block showing exactly what to call and an
+example Gemini snippet. Swap the mock return for a real call and the UI just works.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Route | Does | Wire in |
+| --- | --- | --- |
+| `api/optimize-brief` | Rewrites the sponsor's notes into a clean brief | Gemini |
+| `api/match` | Ranks creators by recent-video fit to the brief | YouTube Data API + Gemini |
+| `api/summarize` | Turns the chatroom into structured deal terms | Gemini |
+| `api/review` | Platform compliance + content/contract review | YouTube Data API + Gemini |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Mock creator/deal data lives in **`src/lib/mockData.js`** — keep the field shapes the
+same when you swap in real data and every page keeps rendering.
+
+### Gemini setup (when ready)
+
+```bash
+npm install @google/generative-ai
+```
+
+Add `.env.local`:
+
+```
+GEMINI_API_KEY=your_key_from_ai_studio
+YOUTUBE_API_KEY=your_youtube_data_api_key
+```
+
+Keys stay server-side (only used inside `src/app/api/*`), never shipped to the browser.
+
+---
+
+## Project map
+
+```
+src/
+  app/
+    page.js               landing / story
+    sponsor/signup/       company-email verification
+    creators/             directory + [id] profile & rate card
+    match/                AI brief → ranked creators
+    dashboard/            active deals + creator pushes
+    deals/[id]/           chatroom (+ Gemini terms)
+    deals/[id]/review/    platform + AI order review
+    api/                  ← all LLM/data integration points (mock now)
+  lib/
+    config.js             APP_NAME + pitch copy (rename here)
+    mockData.js           creators, deals, pushes
+    format.js             number/currency/score helpers
+```
+
+Rename the product in `src/lib/config.js`.
