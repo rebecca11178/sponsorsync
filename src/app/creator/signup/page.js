@@ -8,8 +8,8 @@ import Avatar from "@/components/Avatar";
 // Creator registration — connect YouTube (mock), then set a rate card.
 // TODO(auth): real YouTube OAuth; TODO(api): pull real channel stats.
 const MOCK_CHANNEL = {
-  name: "Maya Chen",
-  handle: "@mayabrews",
+  name: "Lady Gaga",
+  handle: "@ladygaga",
   emoji: "🍵",
   subscribers: 84000,
   avgViews: 41000,

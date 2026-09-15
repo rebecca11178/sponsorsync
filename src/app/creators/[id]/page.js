@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getCreator } from "@/lib/mockData";
 import { compact, usd, scoreTone } from "@/lib/format";
+import { loadAllOverrides, mergePricing } from "@/lib/pricing";
 import Avatar from "@/components/Avatar";
 
 const packages = [
@@ -25,11 +26,17 @@ export default function CreatorDetail() {
   const [pkg, setPkg] = useState("dedicatedVideo");
   const [selected, setSelected] = useState({});
   const [sent, setSent] = useState(false);
+  const [pricing, setPricing] = useState({ rates: c?.rates, commercialRights: c?.commercialRights });
+
+  // Reflect any prices the creator set on their profile (persisted per browser).
+  useEffect(() => {
+    if (c) setPricing(mergePricing(c, loadAllOverrides()));
+  }, [c]);
 
   if (!c) return <div className="mx-auto max-w-3xl px-6 py-16">Creator not found.</div>;
 
-  const rightsTotal = rights.reduce((sum, r) => (selected[r.key] ? sum + c.commercialRights[r.key] : sum), 0);
-  const total = c.rates[pkg] + rightsTotal;
+  const rightsTotal = rights.reduce((sum, r) => (selected[r.key] ? sum + pricing.commercialRights[r.key] : sum), 0);
+  const total = pricing.rates[pkg] + rightsTotal;
   const safety = scoreTone(c.brandSafety);
 
   return (
@@ -98,7 +105,7 @@ export default function CreatorDetail() {
                   <span className="font-medium">{p.label}</span>
                   <span className="block text-xs text-muted">{p.note}</span>
                 </span>
-                <span className="font-semibold">{usd(c.rates[p.key])}</span>
+                <span className="font-semibold">{usd(pricing.rates[p.key])}</span>
               </button>
             ))}
           </div>
@@ -117,7 +124,7 @@ export default function CreatorDetail() {
                   <span className="flex-1">
                     <span className="flex justify-between">
                       <span className="font-medium">{r.label}</span>
-                      <span>+{usd(c.commercialRights[r.key])}</span>
+                      <span>+{usd(pricing.commercialRights[r.key])}</span>
                     </span>
                     <span className="block text-xs text-muted">{r.note}</span>
                   </span>

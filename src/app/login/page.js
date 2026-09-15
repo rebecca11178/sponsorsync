@@ -58,7 +58,7 @@ export default function LoginPage() {
             <Avatar name={a.name} size={44} />
             <span className="flex-1">
               <span className="block font-medium">{a.username}</span>
-              <span className="block text-xs text-muted">{a.role === "sponsor" ? "Company / brand side" : "Creator side"} · {a.name}</span>
+              <span className="block text-xs text-muted">{a.role === "sponsor" ? "Company / brand side" : "Creator side"}</span>
             </span>
             <span className="text-sm font-medium text-brand">Log in →</span>
           </button>

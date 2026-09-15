@@ -7,9 +7,9 @@
 // The logged-in SMB (mock). In production this comes from auth + company-email
 // verification. `verified` drives the "Verified Sponsor" trust badge.
 export const currentSponsor = {
-  company: "BrightLeaf Tea Co.",
-  email: "marketing@brightleaftea.com",
-  domain: "brightleaftea.com",
+  company: "Godfather",
+  email: "admin@godfather.co",
+  domain: "godfather.co",
   verified: true,
   industry: "DTC Food & Beverage",
   budget: 6000,
@@ -21,8 +21,8 @@ export const currentSponsor = {
 export const creators = [
   {
     id: "c1",
-    name: "Maya Chen",
-    handle: "@mayabrews",
+    name: "Lady Gaga",
+    handle: "@ladygaga",
     emoji: "🍵",
     niche: "Food & Wellness",
     location: "US · English",
@@ -156,13 +156,13 @@ export const deals = [
   {
     id: "d1",
     creatorId: "c1",
-    sponsor: "BrightLeaf Tea Co.",
+    sponsor: "Godfather",
     sponsorEmoji: "🍃",
     status: "chatroom", // enquiry → chatroom → contracted → in_production → in_review → completed
     package: "Dedicated video + whitelisting",
     amount: 3300,
     messages: [
-      { from: "sponsor", text: "Hi Maya! We love your matcha content. We'd like a dedicated review of our new cold-brew green tea.", time: "10:02" },
+      { from: "sponsor", text: "Hi Lady Gaga! We love your matcha content. We'd like a dedicated review of our new cold-brew green tea.", time: "10:02" },
       { from: "creator", text: "Thanks for reaching out! I'm interested. Can you share the key talking points and any claims I should avoid?", time: "10:14" },
       { from: "sponsor", text: "Sure — focus on the clean-energy angle, no added sugar. Please don't make health claims like 'boosts metabolism'.", time: "10:19" },
       { from: "creator", text: "Got it. I'd want to keep creative control on the intro. Delivery in ~3 weeks works. Rate would be $2,500 + $800 for you to boost it as an ad.", time: "10:26" },
@@ -172,7 +172,7 @@ export const deals = [
   {
     id: "d2",
     creatorId: "c3",
-    sponsor: "BrightLeaf Tea Co.",
+    sponsor: "Godfather",
     sponsorEmoji: "🍃",
     status: "in_review",
     package: "Integrated video",
@@ -191,7 +191,7 @@ export const deals = [
     package: "Integrated video (60s)",
     amount: 1200,
     messages: [
-      { from: "sponsor", text: "Hi Maya! We'd love a 60s integration of our study headphones in an upcoming wind-down video.", time: "14:20" },
+      { from: "sponsor", text: "Hi Lady Gaga! We'd love a 60s integration of our study headphones in an upcoming wind-down video.", time: "14:20" },
       { from: "creator", text: "Thanks! I like the fit. What are the must-hit talking points?", time: "14:33" },
     ],
   },
@@ -223,7 +223,7 @@ export const enquiries = [
   {
     id: "e1",
     dealId: "d1",
-    sponsor: "BrightLeaf Tea Co.",
+    sponsor: "Godfather",
     verified: true,
     industry: "DTC Food & Beverage",
     package: "Dedicated video + whitelisting",

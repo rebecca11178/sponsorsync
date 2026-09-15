@@ -19,7 +19,7 @@ export async function POST(req) {
 
   const contract = {
     title: "Creator Sponsorship Agreement",
-    parties: "BrightLeaf Tea Co. (“Brand”) and Maya Chen / @mayabrews (“Creator”)",
+    parties: "Godfather (“Brand”) and Lady Gaga / @ladygaga (“Creator”)",
     clauses: [
       { heading: "1. Deliverable", body: "One (1) dedicated review video (60–90s of branded content) published on the Creator’s primary YouTube channel." },
       { heading: "2. Fee", body: "US$2,500 base fee, plus US$800 for ad-whitelisting rights. Total: US$3,300, paid 50% on signing, 50% on publication." },
