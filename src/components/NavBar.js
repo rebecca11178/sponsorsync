@@ -9,6 +9,7 @@ const links = [
   { href: "/creators", label: "Find Creators" },
   { href: "/match", label: "AI Match" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/creator", label: "Creator View" },
 ];
 
 export default function NavBar() {

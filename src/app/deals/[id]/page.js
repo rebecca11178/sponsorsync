@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getDeal, getCreator } from "@/lib/mockData";
 import { usd } from "@/lib/format";
+import StatusTimeline from "@/components/StatusTimeline";
 
 export default function DealChatroom() {
   const { id } = useParams();
@@ -45,7 +46,11 @@ export default function DealChatroom() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <Link href="/dashboard" className="text-sm text-muted hover:text-foreground">← Back to dashboard</Link>
 
-      <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="mt-4 rounded-2xl border border-border bg-surface p-5">
+        <StatusTimeline current={deal.status} />
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Chat */}
         <div className="flex h-[540px] flex-col rounded-2xl border border-border bg-surface">
           <div className="flex items-center gap-3 border-b border-border p-4">
@@ -101,10 +106,16 @@ export default function DealChatroom() {
           </div>
 
           {terms && (
-            <Link href={`/deals/${deal.id}/review`} className="block rounded-2xl border border-border bg-surface p-5 hover:shadow-md">
-              <p className="font-medium">Video delivered? →</p>
-              <p className="mt-1 text-sm text-muted">Run the AI order review against these terms.</p>
-            </Link>
+            <>
+              <Link href={`/deals/${deal.id}/contract`} className="block rounded-2xl border border-brand bg-brand-soft p-5 hover:shadow-md">
+                <p className="font-medium text-brand">Generate contract →</p>
+                <p className="mt-1 text-sm text-muted">Turn these terms into a signable agreement with multi-activation terms.</p>
+              </Link>
+              <Link href={`/deals/${deal.id}/review`} className="block rounded-2xl border border-border bg-surface p-5 hover:shadow-md">
+                <p className="font-medium">Video delivered? →</p>
+                <p className="mt-1 text-sm text-muted">Run the AI order review against these terms.</p>
+              </Link>
+            </>
           )}
         </div>
       </div>

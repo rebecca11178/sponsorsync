@@ -29,6 +29,25 @@ const pillars = [
   },
 ];
 
+const stats = [
+  { value: "$32.6B", label: "creator marketing market size (2025)" },
+  { value: "78%", label: "say YouTube has the most trusted creators" },
+  { value: "36.7%", label: "of brands use YouTube for influencer marketing" },
+  { value: "+30%", label: "avg. conversion lift from creator videos on Shorts" },
+];
+
+const comparison = [
+  { feature: "Verified sponsors (anti-scam trust)", yt: false, tt: false },
+  { feature: "Transparent creator rate cards", yt: false, tt: false },
+  { feature: "Fair-price + fit guidance for SMBs", yt: false, tt: false },
+  { feature: "AI contract & content review", yt: false, tt: false },
+  { feature: "Usable without an ads team", yt: false, tt: true },
+];
+
+function Cell({ on }) {
+  return on ? <span className="text-success">✓</span> : <span className="text-muted/40">—</span>;
+}
+
 export default function Home() {
   return (
     <div>
@@ -48,6 +67,18 @@ export default function Home() {
           <Link href="/match" className="rounded-lg border border-border bg-surface px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-background">
             Let AI match me
           </Link>
+        </div>
+      </section>
+
+      {/* Stats band */}
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label} className="bg-surface p-5">
+              <p className="text-2xl font-semibold text-brand">{s.value}</p>
+              <p className="mt-1 text-xs text-muted">{s.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -78,6 +109,36 @@ export default function Home() {
               <p className="mt-1 text-sm text-muted">{s.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <h2 className="text-2xl font-semibold tracking-tight">The gap we fill</h2>
+        <p className="mt-1 text-sm text-muted">
+          What YouTube&apos;s Creator Partnerships and TikTok both leave out for small businesses.
+        </p>
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full min-w-[560px] border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-border text-left">
+                <th className="py-3 font-medium text-muted">Capability</th>
+                <th className="px-4 py-3 text-center font-medium text-muted">YouTube</th>
+                <th className="px-4 py-3 text-center font-medium text-muted">TikTok</th>
+                <th className="px-4 py-3 text-center font-semibold text-brand">SponsorSync</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparison.map((row) => (
+                <tr key={row.feature} className="border-b border-border">
+                  <td className="py-3">{row.feature}</td>
+                  <td className="px-4 py-3 text-center"><Cell on={row.yt} /></td>
+                  <td className="px-4 py-3 text-center"><Cell on={row.tt} /></td>
+                  <td className="bg-brand-soft/40 px-4 py-3 text-center font-semibold"><Cell on={true} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 

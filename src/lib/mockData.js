@@ -183,3 +183,58 @@ export const deals = [
 export function getDeal(id) {
   return deals.find((d) => d.id === id);
 }
+
+// Ordered lifecycle stages for a deal — powers the status timeline.
+export const dealStages = [
+  { key: "enquiry", label: "Enquiry" },
+  { key: "chatroom", label: "Chat" },
+  { key: "contracted", label: "Contract" },
+  { key: "in_production", label: "Filming" },
+  { key: "in_review", label: "Review" },
+  { key: "completed", label: "Live" },
+];
+
+// ---------------------------------------------------------------------------
+// CREATOR-SIDE inbox — what a creator sees when sponsors reach out.
+// Shows the two-sided, trust-first value: verified sponsors vs. scam DMs.
+// TODO(api): in production this is the creator's real inbox, gated by
+// the sponsor's company-email verification.
+// ---------------------------------------------------------------------------
+export const creatorProfileId = "c1"; // the creator we're "logged in as" for the demo
+
+export const enquiries = [
+  {
+    id: "e1",
+    sponsor: "BrightLeaf Tea Co.",
+    verified: true,
+    industry: "DTC Food & Beverage",
+    package: "Dedicated video + whitelisting",
+    offer: 3300,
+    status: "new",
+    message: "We love your matcha content — would you do a dedicated review of our new cold-brew green tea?",
+  },
+  {
+    id: "e2",
+    sponsor: "NordVibe Audio",
+    verified: true,
+    industry: "Consumer Electronics",
+    package: "Integrated video (60s)",
+    offer: 1200,
+    status: "new",
+    message: "A 60-second integration of our study headphones in an upcoming wind-down video.",
+  },
+  {
+    id: "e3",
+    sponsor: "quickcash-deals",
+    verified: false,
+    industry: "Unverified",
+    package: "Dedicated video",
+    offer: 5000,
+    status: "new",
+    message: "URGENT!! promote our crypto app, huge payout, reply fast!!! send your wallet",
+  },
+];
+
+export function getEnquiry(id) {
+  return enquiries.find((e) => e.id === id);
+}
