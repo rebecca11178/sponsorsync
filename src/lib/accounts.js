@@ -10,27 +10,33 @@ export const ACCOUNTS = [
   {
     id: "sponsor-admin",
     role: "sponsor",
+    username: "Godfather",
     name: "BrightLeaf Tea Co.",
     email: "admin@brightleaftea.com",
-    password: "sponsor123",
+    password: "admin",
     emoji: "🍃",
     verified: true,
   },
   {
     id: "creator-admin",
     role: "creator",
+    username: "Lady Gaga",
     name: "Maya Chen",
     email: "maya@mayabrews.com",
-    password: "creator123",
+    password: "admin",
     emoji: "🍵",
     verified: true,
     creatorId: "c1", // links to the creator profile in mockData
   },
 ];
 
-export function findAccount(email, password) {
+// Login by username (or email), case-insensitive.
+export function findAccount(login, password) {
+  const q = login.trim().toLowerCase();
   return ACCOUNTS.find(
-    (a) => a.email.toLowerCase() === email.trim().toLowerCase() && a.password === password
+    (a) =>
+      (a.username.toLowerCase() === q || a.email.toLowerCase() === q) &&
+      a.password === password
   );
 }
 

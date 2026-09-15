@@ -9,7 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -20,8 +20,8 @@ export default function LoginPage() {
 
   function submit(e) {
     e.preventDefault();
-    const acct = findAccount(email, password);
-    if (!acct) return setError("Wrong email or password. Try one of the demo accounts below.");
+    const acct = findAccount(username, password);
+    if (!acct) return setError("Wrong username or password. Try one of the demo accounts below.");
     signIn(acct);
   }
 
@@ -32,8 +32,8 @@ export default function LoginPage() {
 
       <form onSubmit={submit} className="mt-6 space-y-4 rounded-2xl border border-border bg-surface p-6">
         <div>
-          <label className="text-sm font-medium">Email</label>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com"
+          <label className="text-sm font-medium">Username</label>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Godfather"
             className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-brand" />
         </div>
         <div>
@@ -56,15 +56,15 @@ export default function LoginPage() {
           >
             <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-2xl">{a.emoji}</span>
             <span className="flex-1">
-              <span className="block font-medium">{a.name}</span>
-              <span className="block text-xs text-muted">{a.role === "sponsor" ? "Company / brand side" : "Creator side"} · {a.email}</span>
+              <span className="block font-medium">{a.username}</span>
+              <span className="block text-xs text-muted">{a.role === "sponsor" ? "Company / brand side" : "Creator side"} · {a.name}</span>
             </span>
             <span className="text-sm font-medium text-brand">Log in →</span>
           </button>
         ))}
       </div>
       <p className="mt-4 text-center text-xs text-muted">
-        Passwords: <code className="rounded bg-background px-1">sponsor123</code> / <code className="rounded bg-background px-1">creator123</code>
+        Usernames: <code className="rounded bg-background px-1">Godfather</code> / <code className="rounded bg-background px-1">Lady Gaga</code> · password <code className="rounded bg-background px-1">admin</code>
       </p>
 
       <p className="mt-6 text-center text-sm text-muted">
