@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ACCOUNTS, findAccount, HOME_BY_ROLE } from "@/lib/accounts";
 import { useAuth } from "@/components/AuthProvider";
+import Avatar from "@/components/Avatar";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function LoginPage() {
             onClick={() => signIn(a)}
             className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-left hover:shadow-md"
           >
-            <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-2xl">{a.emoji}</span>
+            <Avatar name={a.name} size={44} />
             <span className="flex-1">
               <span className="block font-medium">{a.username}</span>
               <span className="block text-xs text-muted">{a.role === "sponsor" ? "Company / brand side" : "Creator side"} · {a.name}</span>
@@ -67,10 +68,13 @@ export default function LoginPage() {
         Usernames: <code className="rounded bg-background px-1">Godfather</code> / <code className="rounded bg-background px-1">Lady Gaga</code> · password <code className="rounded bg-background px-1">admin</code>
       </p>
 
-      <p className="mt-6 text-center text-sm text-muted">
-        New creator?{" "}
-        <Link href="/creator/signup" className="font-medium text-brand hover:underline">Join here →</Link>
-      </p>
+      <div className="mt-6 flex flex-col items-center gap-2 text-center text-sm text-muted">
+        <span>New here? Register as a</span>
+        <span className="flex flex-wrap justify-center gap-4">
+          <Link href="/sponsor/signup" className="font-medium text-brand hover:underline">Brand / sponsor →</Link>
+          <Link href="/creator/signup" className="font-medium text-brand hover:underline">Creator →</Link>
+        </span>
+      </div>
     </div>
   );
 }

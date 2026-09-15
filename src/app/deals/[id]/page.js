@@ -7,6 +7,7 @@ import { getDeal, getCreator } from "@/lib/mockData";
 import { usd } from "@/lib/format";
 import StatusTimeline from "@/components/StatusTimeline";
 import { useAuth } from "@/components/AuthProvider";
+import Avatar from "@/components/Avatar";
 
 export default function DealChatroom() {
   const { id } = useParams();
@@ -70,7 +71,7 @@ export default function DealChatroom() {
         {/* Chat */}
         <div className="flex h-[540px] flex-col rounded-2xl border border-border bg-surface">
           <div className="flex items-center gap-3 border-b border-border p-4">
-            <div className="grid h-10 w-10 place-items-center rounded-lg bg-brand-soft text-xl">{counterparty.emoji}</div>
+            <Avatar name={counterparty.name} size={40} />
             <div>
               <p className="font-medium">{counterparty.name}</p>
               <p className="text-xs text-muted">{deal.package} · {usd(deal.amount)}</p>

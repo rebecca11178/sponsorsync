@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { creators } from "@/lib/mockData";
 import { compact, usd, scoreTone } from "@/lib/format";
+import Avatar from "@/components/Avatar";
 
 const tiers = ["All", "Nano", "Micro", "Mid-tier"];
 
@@ -71,7 +72,7 @@ export default function CreatorsPage() {
               className="group rounded-2xl border border-border bg-surface p-5 transition-shadow hover:shadow-md"
             >
               <div className="flex items-start gap-4">
-                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-brand-soft text-2xl">{c.emoji}</div>
+                <Avatar name={c.name} size={56} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{c.name}</h3>

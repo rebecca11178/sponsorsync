@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { getCreator, creatorProfileId } from "@/lib/mockData";
 import { compact, usd, scoreTone } from "@/lib/format";
+import Avatar from "@/components/Avatar";
 
 export default function CreatorProfile() {
   const me = getCreator(creatorProfileId);
@@ -22,7 +23,7 @@ export default function CreatorProfile() {
 
       {/* Header card */}
       <div className="mt-6 flex flex-wrap items-start gap-4 rounded-2xl border border-border bg-surface p-6">
-        <div className="grid h-16 w-16 place-items-center rounded-xl bg-brand-soft text-3xl">{me.emoji}</div>
+        <Avatar name={me.name} size={64} />
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">{me.name}</h2>

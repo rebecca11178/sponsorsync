@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getCreator } from "@/lib/mockData";
 import { compact, usd, scoreTone } from "@/lib/format";
+import Avatar from "@/components/Avatar";
 
 const packages = [
   { key: "integratedVideo", label: "Integrated video", note: "60–90s brand mention in a normal video" },
@@ -39,7 +40,7 @@ export default function CreatorDetail() {
         {/* Left: profile */}
         <div className="space-y-6">
           <div className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-6">
-            <div className="grid h-16 w-16 place-items-center rounded-xl bg-brand-soft text-3xl">{c.emoji}</div>
+            <Avatar name={c.name} size={64} />
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-semibold">{c.name}</h1>

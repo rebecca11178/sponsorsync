@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { compact } from "@/lib/format";
+import Avatar from "@/components/Avatar";
 
 // Creator registration — connect YouTube (mock), then set a rate card.
 // TODO(auth): real YouTube OAuth; TODO(api): pull real channel stats.
@@ -49,7 +50,7 @@ export default function CreatorSignup() {
       {step === 2 && (
         <div className="mt-6 space-y-4">
           <div className="flex items-center gap-3 rounded-2xl border border-success/40 bg-success-soft/30 p-4">
-            <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-2xl">{MOCK_CHANNEL.emoji}</span>
+            <Avatar name={MOCK_CHANNEL.name} size={44} />
             <div>
               <p className="text-sm font-medium">{MOCK_CHANNEL.name} · {MOCK_CHANNEL.handle}</p>
               <p className="text-xs text-muted">{compact(MOCK_CHANNEL.subscribers)} subs · {compact(MOCK_CHANNEL.avgViews)} avg views · verified ✓</p>

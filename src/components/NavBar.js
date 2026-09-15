@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { APP_NAME } from "@/lib/config";
 import { useAuth } from "@/components/AuthProvider";
+import Avatar from "@/components/Avatar";
 
 const LINKS_BY_ROLE = {
   sponsor: [
@@ -59,8 +60,8 @@ export default function NavBar() {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <span className="hidden items-center gap-1.5 text-sm md:flex">
-                <span>{user.emoji}</span>
+              <span className="hidden items-center gap-2 text-sm md:flex">
+                <Avatar name={user.name} size={26} />
                 <span className="font-medium">{user.name}</span>
                 {user.verified && <span className="text-success">✓</span>}
               </span>

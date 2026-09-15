@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { enquiries as seed, getCreator, creatorProfileId } from "@/lib/mockData";
 import { compact, usd } from "@/lib/format";
+import Avatar from "@/components/Avatar";
 
 export default function CreatorInbox() {
   const me = getCreator(creatorProfileId);
@@ -19,7 +20,7 @@ export default function CreatorInbox() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <div className="flex items-center gap-4">
-        <div className="grid h-14 w-14 place-items-center rounded-xl bg-brand-soft text-2xl">{me.emoji}</div>
+        <Avatar name={me.name} size={56} />
         <div className="flex-1">
           <h1 className="text-2xl font-semibold tracking-tight">Creator inbox</h1>
           <p className="text-sm text-muted">{me.name} · {me.handle} · {compact(me.subscribers)} subscribers</p>

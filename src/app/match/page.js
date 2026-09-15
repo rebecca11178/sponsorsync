@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { compact, usd, scoreTone } from "@/lib/format";
+import Avatar from "@/components/Avatar";
 
 export default function MatchPage() {
   const [form, setForm] = useState({
@@ -116,7 +117,7 @@ export default function MatchPage() {
             return (
               <Link key={m.id} href={`/creators/${m.id}`} className="block rounded-2xl border border-border bg-surface p-5 hover:shadow-md">
                 <div className="flex items-center gap-3">
-                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-soft text-2xl">{m.emoji}</div>
+                  <Avatar name={m.name} size={48} />
                   <div className="flex-1">
                     <p className="font-semibold">{m.name}</p>
                     <p className="text-xs text-muted">{compact(m.subscribers)} subs · from {usd(m.rates.dedicatedVideo)}</p>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { currentSponsor, deals, getCreator, creatorPushes } from "@/lib/mockData";
 import { usd, statusLabels } from "@/lib/format";
+import Avatar from "@/components/Avatar";
 
 export default function Dashboard() {
   return (
@@ -24,7 +25,7 @@ export default function Dashboard() {
               const c = getCreator(d.creatorId);
               return (
                 <Link key={d.id} href={`/deals/${d.id}`} className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 hover:shadow-md">
-                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-soft text-2xl">{c.emoji}</div>
+                  <Avatar name={c.name} size={48} />
                   <div className="flex-1">
                     <p className="font-medium">{c.name}</p>
                     <p className="text-xs text-muted">{d.package} · {usd(d.amount)}</p>
@@ -49,7 +50,7 @@ export default function Dashboard() {
               return (
                 <Link key={p.creatorId} href={`/creators/${c.id}`} className="block rounded-2xl border border-border bg-surface p-4 hover:shadow-md">
                   <div className="flex items-center gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-lg bg-brand-soft text-xl">{c.emoji}</div>
+                    <Avatar name={c.name} size={40} />
                     <div>
                       <p className="text-sm font-medium">{c.name}</p>
                       <p className="text-xs text-muted">{c.niche}</p>
