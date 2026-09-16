@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { ACCOUNTS } from "@/lib/accounts";
 
 const AuthContext = createContext(null);
 const KEY = "sponsorsync.user";
@@ -10,10 +11,22 @@ export function AuthProvider({ children }) {
   const [ready, setReady] = useState(false);
 
   // Load persisted session on mount (per-browser convenience only).
+  // Re-resolve from ACCOUNTS by id so account edits (e.g. a rename) always win
+  // over the stale snapshot saved at login time.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) setUser(JSON.parse(raw));
+      if (raw) {
+        const saved = JSON.parse(raw);
+        const fresh = ACCOUNTS.find((a) => a.id === saved.id);
+        if (fresh) {
+          const safe = { ...fresh };
+          delete safe.password;
+          setUser(safe);
+        } else {
+          setUser(saved);
+        }
+      }
     } catch {
       /* private mode / blocked storage — stay logged out */
     }
