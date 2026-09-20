@@ -1,0 +1,1046 @@
+From ebd033e399d71395ce3e3b8112abb16e6175ad70 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 19 Sep 2026 19:55:53 -0500
+Subject: [PATCH] Fix demo enquiry, deal, contract and pricing flow
+
+---
+ README.md                              | 18 +++++++
+ package.json                           |  3 +-
+ src/app/api/contract/route.js          | 48 ++++++------------
+ src/app/api/summarize/route.js         | 41 +++------------
+ src/app/creator/page.js                | 25 ++++++++-
+ src/app/creator/profile/page.js        | 31 ++++++------
+ src/app/creator/signup/page.js         |  9 +++-
+ src/app/creators/[id]/page.js          | 33 ++++++++----
+ src/app/creators/page.js               |  9 ++--
+ src/app/dashboard/page.js              |  9 +++-
+ src/app/deals/[id]/contract/page.js    | 34 ++++++++-----
+ src/app/deals/[id]/page.js             | 23 ++++++---
+ src/app/deals/[id]/performance/page.js |  9 +++-
+ src/app/deals/[id]/review/page.js      |  9 +++-
+ src/app/login/page.js                  |  2 +-
+ src/app/match/page.js                  |  7 ++-
+ src/components/AuthProvider.js         | 70 ++++----------------------
+ src/lib/browserStore.js                | 28 +++++++++++
+ src/lib/dealStore.js                   | 20 ++++++++
+ src/lib/dealTerms.js                   | 19 +++++++
+ src/lib/mockData.js                    | 12 +++++
+ src/lib/pricing.js                     | 14 +++---
+ src/lib/validation.js                  |  8 +++
+ tests/deal-flow.test.mjs               | 25 +++++++++
+ 24 files changed, 311 insertions(+), 195 deletions(-)
+ create mode 100644 src/lib/browserStore.js
+ create mode 100644 src/lib/dealStore.js
+ create mode 100644 src/lib/dealTerms.js
+ create mode 100644 src/lib/validation.js
+ create mode 100644 tests/deal-flow.test.mjs
+
+diff --git a/README.md b/README.md
+index fbec307..af2949b 100644
+--- a/README.md
++++ b/README.md
+@@ -88,3 +88,21 @@ src/
+ ```
+ 
+ Rename the product in `src/lib/config.js`.
++
++## Demo persistence and checks
++
++Run `npm ci`, `npm test`, `npm run lint`, and `npm run build`.
++
++Log in with a demo account before sending enquiries. New enquiries, chat messages,
++brand-side demo signatures and creator prices persist in this browser. Switch to
++the creator demo account in the same browser to see enquiries for c1. The sponsor
++dashboard only lists that demo sponsor's deals. These are UI restrictions, not
++server-side authentication: do not use this prototype for real customer data.
++
++Contract and package-summary endpoints accept validated browser-owned snapshots.
++They use selected prices and rights; they do not infer negotiated terms from chat.
++Production must replace this with authenticated database lookups and confirmation
++by both parties. Reviews and performance remain fixed demo results.
++
++Creator registration edits the existing c1 demo profile; it does not create a new
++account or verify YouTube ownership. Clearing site storage resets the demo.
+diff --git a/package.json b/package.json
+index ce9bcb0..20a651f 100644
+--- a/package.json
++++ b/package.json
+@@ -6,7 +6,8 @@
+     "dev": "next dev",
+     "build": "next build",
+     "start": "next start",
+-    "lint": "eslint"
++    "lint": "eslint",
++    "test": "node --test tests/*.test.mjs"
+   },
+   "dependencies": {
+     "next": "16.3.5",
+diff --git a/src/app/api/contract/route.js b/src/app/api/contract/route.js
+index 859a93f..fb1d6c9 100644
+--- a/src/app/api/contract/route.js
++++ b/src/app/api/contract/route.js
+@@ -1,36 +1,18 @@
+ import { NextResponse } from "next/server";
+-
+-// POST /api/contract
+-// Body: { dealId }
+-// Returns: { contract: { title, parties, clauses: [{ heading, body }] } }
+-//
+-// TODO(llm): generate the contract from the agreed terms (from /api/summarize)
+-// with Gemini, so the language always matches what the two sides actually agreed.
+-// Example:
+-//   const prompt = `Draft a short influencer sponsorship agreement from these
+-//     terms: ${JSON.stringify(terms)}. Include a multi-activation clause so the
+-//     brand can re-run future activations without re-papering. Return sections.`;
+-//
+-// The mock returns a realistic agreement including a MULTI-ACTIVATION clause —
+-// the "negotiate once, reuse" idea that removes mid-campaign contract friction.
+-
++import { getCreator } from "@/lib/mockData";
++import { validateDeal, dealTerms } from "@/lib/dealTerms";
++// Demo snapshots are browser-owned. Production must load authorized deals from a DB.
+ export async function POST(req) {
+-  await req.json(); // { dealId }
+-
+-  const contract = {
+-    title: "Creator Sponsorship Agreement",
+-    parties: "Godfather (“Brand”) and Lady Gaga / @ladygaga (“Creator”)",
+-    clauses: [
+-      { heading: "1. Deliverable", body: "One (1) dedicated review video (60–90s of branded content) published on the Creator’s primary YouTube channel." },
+-      { heading: "2. Fee", body: "US$2,500 base fee, plus US$800 for ad-whitelisting rights. Total: US$3,300, paid 50% on signing, 50% on publication." },
+-      { heading: "3. Timeline", body: "Draft delivered within 3 weeks of signing; publication within 5 business days of Brand approval." },
+-      { heading: "4. Creative control", body: "Creator retains full creative control over the video intro and style, provided the agreed talking points are covered." },
+-      { heading: "5. Compliance", body: "Creator will enable YouTube’s paid-promotion disclosure. No health or performance claims (e.g. “boosts metabolism”)." },
+-      { heading: "6. Ad rights", body: "Brand may run the video as a Creator Partnerships Boost ad for 90 days from publication." },
+-      { heading: "7. Multi-activation", body: "Both parties agree to up to two (2) further activations within 6 months at the same rate card, executable via a one-line addendum — no new contract required." },
+-    ],
+-  };
+-
+-  await new Promise((r) => setTimeout(r, 800));
+-  return NextResponse.json({ contract });
++  try {
++    const { deal } = await req.json();
++    if (!validateDeal(deal) || !getCreator(deal.creatorId)) return NextResponse.json({ error: "Invalid deal snapshot" }, { status: 400 });
++    const creator = getCreator(deal.creatorId);
++    return NextResponse.json({ contract: {
++      title: "Demo Sponsorship Agreement — Draft",
++      parties: `${deal.sponsor} (Brand) and ${creator.name} / ${creator.handle} (Creator)`,
++      clauses: dealTerms(deal).map(t => ({ heading: t.label, body: t.value })).concat([
++        { heading: "Confirmation required", body: "This demo draft reflects the selected package. Payment schedule, delivery date and the scope and duration of any selected rights must be agreed by both parties before use." },
++      ]),
++    } });
++  } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+ }
+diff --git a/src/app/api/summarize/route.js b/src/app/api/summarize/route.js
+index 169c1ea..7175a9f 100644
+--- a/src/app/api/summarize/route.js
++++ b/src/app/api/summarize/route.js
+@@ -1,37 +1,10 @@
+ import { NextResponse } from "next/server";
+-
+-// POST /api/summarize
+-// Body: { messages: [{ from, text, time }] }
+-// Returns: { terms: [{ label, value }] }
+-//
+-// TODO(llm): send the chat transcript to Gemini and ask it to extract the
+-// agreed deal terms as structured JSON. Example:
+-//
+-//   const prompt = `From this brand–creator chat, extract the agreed terms as
+-//     JSON with keys: deliverable, price, addOns, timeline, creativeControl,
+-//     restrictions. Chat:\n${messages.map(m => m.from+': '+m.text).join('\n')}`;
+-//   const out = await model.generateContent(prompt);
+-//   const terms = JSON.parse(out.response.text());
+-//
+-// The mock below returns a fixed, realistic extraction so the panel renders.
+-
++import { validateDeal, dealTerms } from "@/lib/dealTerms";
++// Demo only: a structured package summary, not extraction of agreement from chat.
+ export async function POST(req) {
+-  const { messages = [] } = await req.json();
+-
+-  // Trivial heuristic so the mock reacts a little to the conversation.
+-  const joined = messages.map((m) => m.text).join(" ").toLowerCase();
+-  const hasBoost = joined.includes("boost") || joined.includes("ad");
+-
+-  const terms = [
+-    { label: "Deliverable", value: "1 dedicated review video" },
+-    { label: "Base price", value: "$2,500" },
+-    { label: "Add-on", value: hasBoost ? "Ad whitelisting +$800" : "None" },
+-    { label: "Timeline", value: "~3 weeks to delivery" },
+-    { label: "Creative control", value: "Creator keeps intro" },
+-    { label: "Restrictions", value: "No health claims (e.g. 'boosts metabolism')" },
+-    { label: "Disclosure", value: "Paid promotion label required" },
+-  ];
+-
+-  await new Promise((r) => setTimeout(r, 600));
+-  return NextResponse.json({ terms });
++  try {
++    const { deal } = await req.json();
++    if (!validateDeal(deal)) return NextResponse.json({ error: "Invalid deal snapshot" }, { status: 400 });
++    return NextResponse.json({ terms: dealTerms(deal), method: "demo-order-summary" });
++  } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+ }
+diff --git a/src/app/creator/page.js b/src/app/creator/page.js
+index b2a3e57..5c1a2e5 100644
+--- a/src/app/creator/page.js
++++ b/src/app/creator/page.js
+@@ -4,17 +4,37 @@ import { useState } from "react";
+ import Link from "next/link";
+ import { enquiries as seed, getCreator, creatorProfileId } from "@/lib/mockData";
+ import { compact, usd } from "@/lib/format";
++import { useDeals, saveDeal } from "@/lib/dealStore";
++import { useAuth } from "@/components/AuthProvider";
+ import Avatar from "@/components/Avatar";
+ 
+ export default function CreatorInbox() {
+   const me = getCreator(creatorProfileId);
+-  const [items, setItems] = useState(seed);
++  const { user, ready } = useAuth();
++  const deals = useDeals();
++  const [statuses, setStatuses] = useState({});
++  const items = [
++    ...deals.filter(d => d.creatorId === user?.creatorId).map(d => ({
++      id: d.id, dealId: d.id, sponsor: d.sponsor, verified: true,
++      industry: "Demo sponsor", package: d.package, offer: d.amount,
++      status: statuses[d.id] || d.enquiryStatus || "new",
++      message: d.messages[0]?.text || "New sponsorship enquiry",
++    })),
++    ...seed.filter(e => !e.dealId).map(e => ({ ...e, status: statuses[e.id] || e.status })),
++  ];
++  const [error, setError] = useState("");
+   const [hideUnverified, setHideUnverified] = useState(false);
+ 
+   function setStatus(id, status) {
+-    setItems((list) => list.map((e) => (e.id === id ? { ...e, status } : e)));
++    const deal = deals.find(d => d.id === id);
++    try {
++      if (deal) saveDeal({ ...deal, enquiryStatus: status, status: status === "accepted" ? "chatroom" : deal.status });
++      setStatuses(s => ({ ...s, [id]: status }));
++    } catch { setError("Could not save response."); }
+   }
+ 
++  if (!ready) return <p>Loading…</p>;
++  if (user?.role !== "creator") return <Link href="/login">Log in as a creator</Link>;
+   const shown = hideUnverified ? items.filter((e) => e.verified) : items;
+ 
+   return (
+@@ -38,6 +58,7 @@ export default function CreatorInbox() {
+       </div>
+ 
+       <div className="mt-4 space-y-3">
++        {error && <p role="alert">{error}</p>}
+         {shown.map((e) => (
+           <div
+             key={e.id}
+diff --git a/src/app/creator/profile/page.js b/src/app/creator/profile/page.js
+index 38afa1e..eaf9581 100644
+--- a/src/app/creator/profile/page.js
++++ b/src/app/creator/profile/page.js
+@@ -1,10 +1,11 @@
+ "use client";
+ 
+-import { useEffect, useState } from "react";
++import { useState } from "react";
+ import Link from "next/link";
+ import { getCreator, creatorProfileId } from "@/lib/mockData";
+ import { compact, usd, scoreTone } from "@/lib/format";
+-import { loadAllOverrides, mergePricing, saveCreatorPricing } from "@/lib/pricing";
++import { usePricing, mergePricing, saveCreatorPricing } from "@/lib/pricing";
++import { useAuth } from "@/components/AuthProvider";
+ import Avatar from "@/components/Avatar";
+ 
+ const RATE_FIELDS = [
+@@ -19,31 +20,32 @@ const RIGHTS_FIELDS = [
+ ];
+ 
+ export default function CreatorProfile() {
++  const { user, ready } = useAuth();
+   const me = getCreator(creatorProfileId);
+   const safety = scoreTone(me.brandSafety);
+ 
+-  const [rates, setRates] = useState(me.rates);
+-  const [rights, setRights] = useState(me.commercialRights);
++  const pricing = mergePricing(me, usePricing());
++  const [draftRates, setRates] = useState(null);
++  const [draftRights, setRights] = useState(null);
++  const rates = draftRates ?? pricing.rates;
++  const rights = draftRights ?? pricing.commercialRights;
+   const [editing, setEditing] = useState(false);
+   const [saved, setSaved] = useState(false);
++  const [error, setError] = useState("");
+ 
+-  // Load any prices this creator previously saved (persisted per browser).
+-  useEffect(() => {
+-    const merged = mergePricing(me, loadAllOverrides());
+-    setRates(merged.rates);
+-    setRights(merged.commercialRights);
+-  }, [me]);
+-
+-  const setRate = (k) => (e) => setRates((r) => ({ ...r, [k]: Number(e.target.value) }));
+-  const setRight = (k) => (e) => setRights((r) => ({ ...r, [k]: Number(e.target.value) }));
++  const setRate = (k) => (e) => setRates((r) => ({ ...(r ?? rates), [k]: Number(e.target.value) }));
++  const setRight = (k) => (e) => setRights((r) => ({ ...(r ?? rights), [k]: Number(e.target.value) }));
+ 
+   function save() {
+-    saveCreatorPricing(me.id, { rates, commercialRights: rights });
++    try { saveCreatorPricing(me.id, { rates, commercialRights: rights }); setError(""); }
++    catch (e) { setError(e.message); return; }
+     setEditing(false);
+     setSaved(true);
+     setTimeout(() => setSaved(false), 2500);
+   }
+ 
++  if (!ready) return <p>Loading…</p>;
++  if (user?.role !== "creator") return <Link href="/login">Log in as a creator</Link>;
+   return (
+     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+       <div className="flex items-center justify-between">
+@@ -52,6 +54,7 @@ export default function CreatorProfile() {
+       </div>
+       <p className="mt-1 text-sm text-muted">Set your rates here — this is exactly what verified brands see when they view you.</p>
+ 
++      {error && <p role="alert" className="text-danger">{error}</p>}
+       {/* Header card */}
+       <div className="mt-6 flex flex-wrap items-start gap-4 rounded-2xl border border-border bg-surface p-6">
+         <Avatar name={me.name} size={64} />
+diff --git a/src/app/creator/signup/page.js b/src/app/creator/signup/page.js
+index 162e37b..7209540 100644
+--- a/src/app/creator/signup/page.js
++++ b/src/app/creator/signup/page.js
+@@ -3,6 +3,7 @@
+ import { useState } from "react";
+ import Link from "next/link";
+ import { compact } from "@/lib/format";
++import { saveCreatorPricing } from "@/lib/pricing";
+ import Avatar from "@/components/Avatar";
+ 
+ // Creator registration — connect YouTube (mock), then set a rate card.
+@@ -17,6 +18,11 @@ const MOCK_CHANNEL = {
+ };
+ 
+ export default function CreatorSignup() {
++  const [error, setError] = useState("");
++  function publish() {
++    try { saveCreatorPricing("c1", { rates }); setError(""); setStep(3); }
++    catch (e) { setError(e.message); }
++  }
+   const [step, setStep] = useState(1);
+   const [rates, setRates] = useState({ integratedVideo: 1200, dedicatedVideo: 2500, short: 600 });
+ 
+@@ -27,6 +33,7 @@ export default function CreatorSignup() {
+       <h1 className="text-2xl font-semibold tracking-tight">Join as a creator</h1>
+       <p className="mt-2 text-sm text-muted">Connect your channel and set your prices. Only verified brands can reach you.</p>
+ 
++      {error && <p role="alert" className="text-danger">{error}</p>}
+       {/* Step indicator */}
+       <div className="mt-6 flex items-center gap-2 text-xs text-muted">
+         <span className={step >= 1 ? "font-semibold text-brand" : ""}>1. Connect</span>
+@@ -76,7 +83,7 @@ export default function CreatorSignup() {
+                 </label>
+               ))}
+             </div>
+-            <button onClick={() => setStep(3)} className="mt-5 w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">
++            <button onClick={publish} className="mt-5 w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">
+               Publish my profile
+             </button>
+           </div>
+diff --git a/src/app/creators/[id]/page.js b/src/app/creators/[id]/page.js
+index 0029b79..2ec50c0 100644
+--- a/src/app/creators/[id]/page.js
++++ b/src/app/creators/[id]/page.js
+@@ -1,11 +1,14 @@
+ "use client";
+ 
+-import { useState, useEffect } from "react";
++import { useState } from "react";
+ import { useParams } from "next/navigation";
+ import Link from "next/link";
+ import { getCreator } from "@/lib/mockData";
+ import { compact, usd, scoreTone } from "@/lib/format";
+-import { loadAllOverrides, mergePricing } from "@/lib/pricing";
++import { usePricing, mergePricing } from "@/lib/pricing";
++import { saveDeal } from "@/lib/dealStore";
++import { useAuth } from "@/components/AuthProvider";
++import { PACKAGE_LABELS } from "@/lib/format";
+ import Avatar from "@/components/Avatar";
+ 
+ const packages = [
+@@ -26,12 +29,21 @@ export default function CreatorDetail() {
+   const [pkg, setPkg] = useState("dedicatedVideo");
+   const [selected, setSelected] = useState({});
+   const [sent, setSent] = useState(false);
+-  const [pricing, setPricing] = useState({ rates: c?.rates, commercialRights: c?.commercialRights });
+-
+-  // Reflect any prices the creator set on their profile (persisted per browser).
+-  useEffect(() => {
+-    if (c) setPricing(mergePricing(c, loadAllOverrides()));
+-  }, [c]);
++  const overrides = usePricing();
++  const pricing = c ? mergePricing(c, overrides) : null;
++  const { user } = useAuth();
++  const [error, setError] = useState("");
++  function sendEnquiry() {
++    if (user?.role !== "sponsor") { setError("Log in as a demo sponsor to send an enquiry."); return; }
++    const dealId = crypto.randomUUID();
++    const chosenRights = Object.fromEntries(rights.filter(r => selected[r.key]).map(r => [r.key, pricing.commercialRights[r.key]]));
++    try {
++      saveDeal({ id: dealId, sponsorId: user.id, sponsor: user.name, creatorId: c.id,
++        status: "enquiry", packageKey: pkg, package: PACKAGE_LABELS[pkg],
++        basePrice: pricing.rates[pkg], rights: chosenRights, amount: total, messages: [] });
++      setSent(dealId); setError("");
++    } catch { setError("Could not save the enquiry. Enable browser storage and retry."); }
++  }
+ 
+   if (!c) return <div className="mx-auto max-w-3xl px-6 py-16">Creator not found.</div>;
+ 
+@@ -138,16 +150,17 @@ export default function CreatorDetail() {
+             <span className="text-xl font-semibold">{usd(total)}</span>
+           </div>
+ 
++          {error && <p role="alert" className="text-danger">{error}</p>}
+           {sent ? (
+             <div className="rounded-lg bg-success-soft/60 p-3 text-sm">
+               <p className="font-medium text-success">✓ Enquiry sent</p>
+-              <Link href="/deals/d1" className="mt-2 inline-block font-medium text-brand hover:underline">
++              <Link href={`/deals/${sent}`} className="mt-2 inline-block font-medium text-brand hover:underline">
+                 Open chatroom →
+               </Link>
+             </div>
+           ) : (
+             <button
+-              onClick={() => setSent(true)}
++              onClick={sendEnquiry}
+               className="w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark"
+             >
+               Send enquiry
+diff --git a/src/app/creators/page.js b/src/app/creators/page.js
+index 639d7fb..50281b9 100644
+--- a/src/app/creators/page.js
++++ b/src/app/creators/page.js
+@@ -1,10 +1,10 @@
+ "use client";
+ 
+-import { useMemo, useState, useEffect } from "react";
++import { useMemo, useState } from "react";
+ import Link from "next/link";
+ import { creators } from "@/lib/mockData";
+ import { compact, usd, scoreTone } from "@/lib/format";
+-import { loadAllOverrides, mergePricing } from "@/lib/pricing";
++import { usePricing, mergePricing } from "@/lib/pricing";
+ import Avatar from "@/components/Avatar";
+ 
+ const tiers = ["All", "Nano", "Micro", "Mid-tier"];
+@@ -12,10 +12,7 @@ const tiers = ["All", "Nano", "Micro", "Mid-tier"];
+ export default function CreatorsPage() {
+   const [tier, setTier] = useState("All");
+   const [maxPrice, setMaxPrice] = useState(10000);
+-  const [overrides, setOverrides] = useState({});
+-
+-  // Reflect creator-set prices so the list matches each creator's detail page (P0-3).
+-  useEffect(() => setOverrides(loadAllOverrides()), []);
++  const overrides = usePricing();
+ 
+   const list = useMemo(() => {
+     return creators
+diff --git a/src/app/dashboard/page.js b/src/app/dashboard/page.js
+index 801fd7b..3fed7c2 100644
+--- a/src/app/dashboard/page.js
++++ b/src/app/dashboard/page.js
+@@ -1,9 +1,16 @@
++"use client";
++import { useAuth } from "@/components/AuthProvider";
++import { useDeals } from "@/lib/dealStore";
+ import Link from "next/link";
+-import { currentSponsor, deals, getCreator, creatorPushes } from "@/lib/mockData";
++import { currentSponsor, getCreator, creatorPushes } from "@/lib/mockData";
+ import { usd, statusLabels } from "@/lib/format";
+ import Avatar from "@/components/Avatar";
+ 
+ export default function Dashboard() {
++  const { user, ready } = useAuth();
++  const deals = useDeals().filter(d => d.sponsorId === user?.id);
++  if (!ready) return <p>Loading…</p>;
++  if (user?.role !== "sponsor") return <Link href="/login">Log in as a sponsor</Link>;
+   return (
+     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+       <div className="flex items-center justify-between">
+diff --git a/src/app/deals/[id]/contract/page.js b/src/app/deals/[id]/contract/page.js
+index da620f8..30269e3 100644
+--- a/src/app/deals/[id]/contract/page.js
++++ b/src/app/deals/[id]/contract/page.js
+@@ -2,35 +2,45 @@
+ 
+ import { useState, useEffect } from "react";
+ import { useParams } from "next/navigation";
++import { useDeal, canAccessDeal, saveDeal } from "@/lib/dealStore";
++import { useAuth } from "@/components/AuthProvider";
+ import Link from "next/link";
+-import { getDeal, getCreator } from "@/lib/mockData";
++import { getCreator } from "@/lib/mockData";
+ 
+ export default function ContractPage() {
+   const { id } = useParams();
+-  const deal = getDeal(id);
++  const { user } = useAuth();
++  const { deal, ready } = useDeal(id);
+   const creator = deal ? getCreator(deal.creatorId) : null;
+ 
+   const [contract, setContract] = useState(null);
+   const [loading, setLoading] = useState(true);
+-  const [signed, setSigned] = useState(false);
++  const signed = !!deal?.brandSigned;
++  const [error, setError] = useState("");
+ 
+   useEffect(() => {
++    if (!ready || !canAccessDeal(deal, user)) return;
+     let alive = true;
+     (async () => {
++      try {
+       const res = await fetch("/api/contract", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+-        body: JSON.stringify({ dealId: id }),
++        body: JSON.stringify({ deal }),
+       });
++      if (!res.ok) throw new Error("Could not generate contract.");
+       const data = await res.json();
+       if (alive) {
+         setContract(data.contract);
+         setLoading(false);
+       }
++      } catch (e) { if (alive) { setError(e.message); setLoading(false); } }
+     })();
+     return () => { alive = false; };
+-  }, [id]);
++  }, [id, ready, deal, user]);
+ 
++  if (!ready) return <p>Loading…</p>;
++  if (!canAccessDeal(deal, user)) return <p>Deal unavailable for this account.</p>;
+   if (!deal) return <div className="mx-auto max-w-3xl px-6 py-16">Deal not found.</div>;
+ 
+   return (
+@@ -38,11 +48,11 @@ export default function ContractPage() {
+       <Link href={`/deals/${deal.id}`} className="text-sm text-muted hover:text-foreground">← Back to chatroom</Link>
+       <h1 className="mt-4 text-2xl font-semibold tracking-tight">Contract</h1>
+       <p className="mt-1 text-sm text-muted">
+-        Generated from your agreed terms with {creator.name}.{" "}
+-        <span className="text-brand">TODO(llm): draft with Gemini.</span>
++        Demo draft for your selected package with {creator.name}.{" "}
++        <span className="text-brand">Confirm outstanding terms with the other party.</span>
+       </p>
+ 
+-      {loading ? (
++      {error ? <p role="alert">{error}</p> : loading ? (
+         <div className="mt-6 grid place-items-center rounded-2xl border border-border bg-surface p-16 text-sm text-muted">
+           Drafting the agreement…
+         </div>
+@@ -62,7 +72,7 @@ export default function ContractPage() {
+             <div className="mt-8 grid grid-cols-2 gap-6 border-t border-border pt-6 text-sm">
+               <div>
+                 <div className={`h-10 ${signed ? "font-[cursive] text-lg text-foreground" : ""}`}>
+-                  {signed ? "Godfather" : ""}
++                  {signed ? deal.sponsor : ""}
+                 </div>
+                 <p className="border-t border-border pt-1 text-muted">Brand signature</p>
+               </div>
+@@ -75,14 +85,14 @@ export default function ContractPage() {
+ 
+           {signed ? (
+             <div className="mt-4 rounded-2xl border border-border bg-success-soft/50 p-4 text-sm">
+-              <p className="font-medium text-success">✓ Signed on your side — sent to {creator.name}.</p>
++              <p className="font-medium text-success">✓ Demo signature saved on your side for {creator.name}.</p>
+               <Link href={`/deals/${deal.id}/review`} className="mt-2 inline-block font-medium text-brand hover:underline">
+                 Skip ahead to order review →
+               </Link>
+             </div>
+           ) : (
+-            <button onClick={() => setSigned(true)} className="mt-4 w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">
+-              Sign &amp; send to creator
++            <button disabled={user.role !== "sponsor"} onClick={() => { try { saveDeal({ ...deal, brandSigned: true }); } catch { setError("Could not save signature."); } }} className="mt-4 w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">
++              Save demo brand signature
+             </button>
+           )}
+         </>
+diff --git a/src/app/deals/[id]/page.js b/src/app/deals/[id]/page.js
+index 77c6e2a..6eeb2ff 100644
+--- a/src/app/deals/[id]/page.js
++++ b/src/app/deals/[id]/page.js
+@@ -2,8 +2,9 @@
+ 
+ import { useState } from "react";
+ import { useParams } from "next/navigation";
++import { useDeal, canAccessDeal, saveDeal } from "@/lib/dealStore";
+ import Link from "next/link";
+-import { getDeal, getCreator } from "@/lib/mockData";
++import { getCreator } from "@/lib/mockData";
+ import { usd } from "@/lib/format";
+ import StatusTimeline from "@/components/StatusTimeline";
+ import { useAuth } from "@/components/AuthProvider";
+@@ -13,7 +14,7 @@ export default function DealChatroom() {
+   const { id } = useParams();
+   const { user } = useAuth();
+   const role = user?.role || "sponsor"; // viewer perspective
+-  const deal = getDeal(id);
++  const { deal, ready } = useDeal(id);
+   const creator = deal ? getCreator(deal.creatorId) : null;
+ 
+   // Who the viewer is talking TO (the counterparty).
+@@ -24,17 +25,21 @@ export default function DealChatroom() {
+   const backHref = role === "creator" ? "/creator" : "/dashboard";
+   const backLabel = role === "creator" ? "← Back to inbox" : "← Back to dashboard";
+ 
+-  const [messages, setMessages] = useState(deal?.messages || []);
++  const messages = deal?.messages || [];
++  const [error, setError] = useState("");
+   const [draft, setDraft] = useState("");
+   const [terms, setTerms] = useState(null);
+   const [summarizing, setSummarizing] = useState(false);
+ 
++  if (!ready) return <p>Loading…</p>;
++  if (!canAccessDeal(deal, user)) return <p>Deal unavailable for this account.</p>;
+   if (!deal) return <div className="mx-auto max-w-3xl px-6 py-16">Deal not found.</div>;
+ 
+   function send(e) {
+     e.preventDefault();
+     if (!draft.trim()) return;
+-    setMessages((m) => [...m, { from: role, text: draft.trim(), time: "now" }]);
++    try { saveDeal({ ...deal, messages: [...messages, { from: role, text: draft.trim(), time: "now" }] }); }
++    catch { setError("Could not save message."); return; }
+     setDraft("");
+   }
+ 
+@@ -45,11 +50,12 @@ export default function DealChatroom() {
+       const res = await fetch("/api/summarize", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+-        body: JSON.stringify({ messages }),
++        body: JSON.stringify({ deal }),
+       });
++      if (!res.ok) throw new Error("Could not summarize this deal.");
+       const data = await res.json();
+       setTerms(data.terms);
+-    } finally {
++    } catch (e) { setError(e.message); } finally {
+       setSummarizing(false);
+     }
+   }
+@@ -68,6 +74,7 @@ export default function DealChatroom() {
+       </div>
+ 
+       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
++        {error && <p role="alert">{error}</p>}
+         {/* Chat */}
+         <div className="flex h-[540px] flex-col rounded-2xl border border-border bg-surface">
+           <div className="flex items-center gap-3 border-b border-border p-4">
+@@ -103,11 +110,11 @@ export default function DealChatroom() {
+           <div className="rounded-2xl border border-border bg-surface p-5">
+             <h2 className="font-semibold">Collaboration terms</h2>
+             <p className="mt-1 text-xs text-muted">
+-              Gemini reads the chat and pulls out the agreed details, so nothing gets lost before the contract.
++              Demo summary of the selected package and price. Confirm any negotiated changes before contracting.
+             </p>
+             <button onClick={summarize} disabled={summarizing}
+               className="mt-3 w-full rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60">
+-              {summarizing ? "Reading chat…" : "✨ Summarize with Gemini"}
++              {summarizing ? "Reading chat…" : "Summarize selected package"}
+             </button>
+ 
+             {terms && (
+diff --git a/src/app/deals/[id]/performance/page.js b/src/app/deals/[id]/performance/page.js
+index 3ae18f6..5e45f47 100644
+--- a/src/app/deals/[id]/performance/page.js
++++ b/src/app/deals/[id]/performance/page.js
+@@ -2,12 +2,15 @@
+ 
+ import { useEffect, useState } from "react";
+ import { useParams } from "next/navigation";
++import { useDeal, canAccessDeal } from "@/lib/dealStore";
++import { useAuth } from "@/components/AuthProvider";
+ import Link from "next/link";
+-import { getDeal, getCreator } from "@/lib/mockData";
++import { getCreator } from "@/lib/mockData";
+ 
+ export default function PerformancePage() {
+   const { id } = useParams();
+-  const deal = getDeal(id);
++  const { user } = useAuth();
++  const { deal, ready } = useDeal(id);
+   const creator = deal ? getCreator(deal.creatorId) : null;
+   const [data, setData] = useState(null);
+ 
+@@ -25,6 +28,8 @@ export default function PerformancePage() {
+     return () => { alive = false; };
+   }, [id]);
+ 
++  if (!ready) return <p>Loading…</p>;
++  if (!canAccessDeal(deal, user)) return <p>Deal unavailable for this account.</p>;
+   if (!deal) return <div className="mx-auto max-w-3xl px-6 py-16">Deal not found.</div>;
+ 
+   const maxFunnel = data ? data.funnel[0].value : 1;
+diff --git a/src/app/deals/[id]/review/page.js b/src/app/deals/[id]/review/page.js
+index 3f77633..1f90f36 100644
+--- a/src/app/deals/[id]/review/page.js
++++ b/src/app/deals/[id]/review/page.js
+@@ -2,18 +2,23 @@
+ 
+ import { useState } from "react";
+ import { useParams } from "next/navigation";
++import { useDeal, canAccessDeal } from "@/lib/dealStore";
++import { useAuth } from "@/components/AuthProvider";
+ import Link from "next/link";
+-import { getDeal, getCreator } from "@/lib/mockData";
++import { getCreator } from "@/lib/mockData";
+ 
+ export default function OrderReview() {
+   const { id } = useParams();
+-  const deal = getDeal(id);
++  const { user } = useAuth();
++  const { deal, ready } = useDeal(id);
+   const creator = deal ? getCreator(deal.creatorId) : null;
+ 
+   const [videoUrl, setVideoUrl] = useState("https://youtube.com/watch?v=demo");
+   const [running, setRunning] = useState(false);
+   const [result, setResult] = useState(null);
+ 
++  if (!ready) return <p>Loading…</p>;
++  if (!canAccessDeal(deal, user)) return <p>Deal unavailable for this account.</p>;
+   if (!deal) return <div className="mx-auto max-w-3xl px-6 py-16">Deal not found.</div>;
+ 
+   async function runReview() {
+diff --git a/src/app/login/page.js b/src/app/login/page.js
+index 26e2083..9727908 100644
+--- a/src/app/login/page.js
++++ b/src/app/login/page.js
+@@ -15,7 +15,7 @@ export default function LoginPage() {
+   const [error, setError] = useState("");
+ 
+   function signIn(account) {
+-    login(account);
++    try { login(account); } catch { setError("Enable browser storage to use the demo login."); return; }
+     router.push(HOME_BY_ROLE[account.role] || "/");
+   }
+ 
+diff --git a/src/app/match/page.js b/src/app/match/page.js
+index 531dcdd..fb0231a 100644
+--- a/src/app/match/page.js
++++ b/src/app/match/page.js
+@@ -4,6 +4,7 @@ import { useState } from "react";
+ import Link from "next/link";
+ import { compact, usd, scoreTone, startingPrice, bestPackageWithin } from "@/lib/format";
+ import { loadAllOverrides, mergePricing } from "@/lib/pricing";
++import { parseLimit } from "@/lib/validation";
+ import Avatar from "@/components/Avatar";
+ 
+ const STEPS = ["Business", "Goal", "Audience", "Budget", "Brand", "Results"];
+@@ -63,6 +64,7 @@ export default function MatchPage() {
+   }
+ 
+   async function runMatch() {
++    if ([form.budget, form.perCreatorCap].some(v => parseLimit(v) === null)) { setError(true); return; }
+     setMatching(true);
+     setResults(null);
+     setError(false);
+@@ -320,6 +322,7 @@ export default function MatchPage() {
+         )}
+       </div>
+ 
++      {error && step !== 5 && <p role="alert" className="text-danger">Budget and cap must be non-negative numbers.</p>}
+       {/* Footer nav */}
+       <div className="mt-5 flex items-center justify-between">
+         <button onClick={back} disabled={step === 0} className="text-sm font-medium text-muted hover:text-foreground disabled:opacity-0">
+@@ -346,8 +349,8 @@ function deriveGroups(form, results) {
+   if (!results?.creators) return null;
+   const overrides = typeof window !== "undefined" ? loadAllOverrides() : {};
+   const cap = Math.min(
+-    Number(form.perCreatorCap) > 0 ? Number(form.perCreatorCap) : Infinity,
+-    Number(form.budget) > 0 ? Number(form.budget) : Infinity
++    parseLimit(form.perCreatorCap) ?? 0,
++    parseLimit(form.budget) ?? 0
+   );
+   const within = [];
+   const over = [];
+diff --git a/src/components/AuthProvider.js b/src/components/AuthProvider.js
+index c0aa0de..3406b2a 100644
+--- a/src/components/AuthProvider.js
++++ b/src/components/AuthProvider.js
+@@ -1,68 +1,18 @@
+ "use client";
+-
+-import { createContext, useContext, useEffect, useState } from "react";
++import { createContext, useContext, useMemo } from "react";
+ import { ACCOUNTS } from "@/lib/accounts";
+-
++import { useStored, useHydrated, writeStored } from "@/lib/browserStore";
+ const AuthContext = createContext(null);
+ const KEY = "sponsorsync.user";
+-
+ export function AuthProvider({ children }) {
+-  const [user, setUser] = useState(null);
+-  const [ready, setReady] = useState(false);
+-
+-  // Load persisted session on mount (per-browser convenience only).
+-  // Re-resolve from ACCOUNTS by id so account edits (e.g. a rename) always win
+-  // over the stale snapshot saved at login time.
+-  useEffect(() => {
+-    try {
+-      const raw = localStorage.getItem(KEY);
+-      if (raw) {
+-        const saved = JSON.parse(raw);
+-        const fresh = ACCOUNTS.find((a) => a.id === saved.id);
+-        if (fresh) {
+-          const safe = { ...fresh };
+-          delete safe.password;
+-          setUser(safe);
+-        } else {
+-          setUser(saved);
+-        }
+-      }
+-    } catch {
+-      /* private mode / blocked storage — stay logged out */
+-    }
+-    setReady(true);
+-  }, []);
+-
+-  function login(account) {
+-    // Never persist the password.
+-    const safe = { ...account };
+-    delete safe.password;
+-    setUser(safe);
+-    try {
+-      localStorage.setItem(KEY, JSON.stringify(safe));
+-    } catch {
+-      /* ignore */
+-    }
+-  }
+-
+-  function logout() {
+-    setUser(null);
+-    try {
+-      localStorage.removeItem(KEY);
+-    } catch {
+-      /* ignore */
+-    }
+-  }
+-
+-  return (
+-    <AuthContext.Provider value={{ user, ready, login, logout }}>
+-      {children}
+-    </AuthContext.Provider>
+-  );
++  const saved = useStored(KEY, null);
++  const ready = useHydrated();
++  const account = ACCOUNTS.find(a => a.id === saved?.id);
++  const user = useMemo(() => account ? Object.fromEntries(Object.entries(account).filter(([k]) => k !== "password")) : null, [account]);
++  function login(account) { writeStored(KEY, { id: account.id }); }
++  function logout() { writeStored(KEY, null); }
++  return <AuthContext.Provider value={{ user, ready, login, logout }}>{children}</AuthContext.Provider>;
+ }
+-
+ export function useAuth() {
+-  const ctx = useContext(AuthContext);
+-  if (!ctx) return { user: null, ready: false, login: () => {}, logout: () => {} };
+-  return ctx;
++  return useContext(AuthContext) || { user: null, ready: false };
+ }
+diff --git a/src/lib/browserStore.js b/src/lib/browserStore.js
+new file mode 100644
+index 0000000..909ff74
+--- /dev/null
++++ b/src/lib/browserStore.js
+@@ -0,0 +1,28 @@
++"use client";
++import { useMemo, useSyncExternalStore } from "react";
++
++const EVENT = "sponsorsync.storage";
++export function readStored(key) {
++  try { return localStorage.getItem(key); } catch { return null; }
++}
++export function writeStored(key, value) {
++  // Report storage failures instead of falsely claiming a successful save.
++  localStorage.setItem(key, JSON.stringify(value));
++  window.dispatchEvent(new Event(EVENT));
++}
++function subscribe(callback) {
++  window.addEventListener("storage", callback);
++  window.addEventListener(EVENT, callback);
++  return () => {
++    window.removeEventListener("storage", callback);
++    window.removeEventListener(EVENT, callback);
++  };
++}
++export function useStored(key, fallback) {
++  const raw = useSyncExternalStore(subscribe, () => readStored(key), () => null);
++  const parsed = useMemo(() => { try { return raw === null ? null : JSON.parse(raw); } catch { return null; } }, [raw]);
++  return parsed ?? fallback;
++}
++export function useHydrated() {
++  return useSyncExternalStore(subscribe, () => true, () => false);
++}
+diff --git a/src/lib/dealStore.js b/src/lib/dealStore.js
+new file mode 100644
+index 0000000..b1caa55
+--- /dev/null
++++ b/src/lib/dealStore.js
+@@ -0,0 +1,20 @@
++"use client";
++import { validateDeal } from "./dealTerms";
++import { deals as seed } from "./mockData";
++import { useStored, useHydrated, readStored, writeStored } from "./browserStore";
++const KEY = "sponsorsync.deals";
++export function useDeals() { return useStored(KEY, seed); }
++export function useDeal(id) {
++  const deals = useDeals();
++  const ready = useHydrated();
++  return { deal: deals.find(d => d.id === id), ready };
++}
++export function saveDeal(deal) {
++  if (!validateDeal(deal)) throw new Error("Invalid deal prices");
++  let all;
++  try { all = JSON.parse(readStored(KEY)) || seed; } catch { all = seed; }
++  writeStored(KEY, [...all.filter(d => d.id !== deal.id), deal]);
++}
++export function canAccessDeal(deal, user) {
++  return !!deal && !!user && (user.role === "sponsor" ? deal.sponsorId === user.id : deal.creatorId === user.creatorId);
++}
+diff --git a/src/lib/dealTerms.js b/src/lib/dealTerms.js
+new file mode 100644
+index 0000000..6f80ec8
+--- /dev/null
++++ b/src/lib/dealTerms.js
+@@ -0,0 +1,19 @@
++import { PACKAGE_LABELS, usd } from "./format.js";
++import { validPrices } from "./validation.js";
++export const RIGHTS_LABELS = { whitelisting: "Ad whitelisting", usageExtension: "Usage extension", exclusivity: "Category exclusivity" };
++export function validateDeal(deal) {
++  return !!deal && typeof deal.sponsor === "string" && !!deal.sponsor.trim()
++    && typeof deal.creatorId === "string" && Object.hasOwn(PACKAGE_LABELS, deal.packageKey)
++    && typeof deal.basePrice === "number" && Number.isFinite(deal.basePrice) && deal.basePrice >= 0
++    && validPrices(deal.rights) && Object.keys(deal.rights).every(k => Object.hasOwn(RIGHTS_LABELS, k))
++    && Number.isFinite(deal.amount) && Math.abs(deal.amount - deal.basePrice - Object.values(deal.rights).reduce((a,b) => a+b,0)) < 0.001;
++}
++export function dealTerms(deal) {
++  return [
++    { label: "Deliverable", value: PACKAGE_LABELS[deal.packageKey] },
++    { label: "Base price", value: usd(deal.basePrice) },
++    { label: "Add-on", value: Object.entries(deal.rights).map(([k,v]) => `${RIGHTS_LABELS[k]} +${usd(v)}`).join(", ") || "None" },
++    { label: "Total", value: usd(deal.amount) },
++    { label: "Timeline", value: "To be confirmed by both parties" },
++  ];
++}
+diff --git a/src/lib/mockData.js b/src/lib/mockData.js
+index 9a9be3e..fbd7f3d 100644
+--- a/src/lib/mockData.js
++++ b/src/lib/mockData.js
+@@ -155,6 +155,10 @@ export const creatorPushes = [
+ export const deals = [
+   {
+     id: "d1",
++    sponsorId: "sponsor-admin",
++    packageKey: "dedicatedVideo",
++    basePrice: 2500,
++    rights: { whitelisting: 800 },
+     creatorId: "c1",
+     sponsor: "Godfather",
+     sponsorEmoji: "🍃",
+@@ -171,6 +175,10 @@ export const deals = [
+   },
+   {
+     id: "d2",
++    sponsorId: "sponsor-admin",
++    packageKey: "integratedVideo",
++    basePrice: 450,
++    rights: {},
+     creatorId: "c3",
+     sponsor: "Godfather",
+     sponsorEmoji: "🍃",
+@@ -184,6 +192,10 @@ export const deals = [
+   },
+   {
+     id: "d3",
++    sponsorId: "nordvibe",
++    packageKey: "integratedVideo",
++    basePrice: 1200,
++    rights: {},
+     creatorId: "c1",
+     sponsor: "NordVibe Audio",
+     sponsorEmoji: "🎧",
+diff --git a/src/lib/pricing.js b/src/lib/pricing.js
+index 40e4d27..9829bc7 100644
+--- a/src/lib/pricing.js
++++ b/src/lib/pricing.js
+@@ -2,7 +2,10 @@
+ // Lets a creator set their own rate card (on /creator/profile) and have those
+ // prices show to sponsors (on /creators/[id]) within the same browser session.
+ // TODO(api): replace localStorage with the creator's saved rate card in the DB.
++import { useStored, writeStored } from "./browserStore";
++import { validPrices } from "./validation";
+ const KEY = "sponsorsync.rates";
++export function usePricing() { return useStored(KEY, {}); }
+ 
+ export function loadAllOverrides() {
+   try {
+@@ -22,11 +25,10 @@ export function mergePricing(creator, overrides) {
+ }
+ 
+ export function saveCreatorPricing(creatorId, pricing) {
+-  try {
+-    const all = loadAllOverrides();
+-    all[creatorId] = pricing;
+-    localStorage.setItem(KEY, JSON.stringify(all));
+-  } catch {
+-    /* ignore blocked storage */
++  if (!validPrices(pricing.rates) || (pricing.commercialRights && !validPrices(pricing.commercialRights))) {
++    throw new Error("Prices must be finite, non-negative numbers.");
+   }
++  const all = loadAllOverrides() || {};
++  all[creatorId] = { ...all[creatorId], ...pricing };
++  writeStored(KEY, all);
+ }
+diff --git a/src/lib/validation.js b/src/lib/validation.js
+new file mode 100644
+index 0000000..e6be8de
+--- /dev/null
++++ b/src/lib/validation.js
+@@ -0,0 +1,8 @@
++export function parseLimit(value) {
++  if (value === "" || value == null) return Infinity;
++  const n = Number(value);
++  return Number.isFinite(n) && n >= 0 ? n : null;
++}
++export function validPrices(values) {
++  return values && Object.values(values).every(n => typeof n === "number" && Number.isFinite(n) && n >= 0);
++}
+diff --git a/tests/deal-flow.test.mjs b/tests/deal-flow.test.mjs
+new file mode 100644
+index 0000000..05a7dd9
+--- /dev/null
++++ b/tests/deal-flow.test.mjs
+@@ -0,0 +1,25 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { parseLimit, validPrices } from '../src/lib/validation.js';
++import { validateDeal, dealTerms } from '../src/lib/dealTerms.js';
++import { deals } from '../src/lib/mockData.js';
++test('zero cap stays zero; absent cap unlimited; negative and nonfinite rejected', () => {
++  assert.equal(parseLimit(0), 0);
++  assert.equal(parseLimit(''), Infinity);
++  for (const value of [-1, 'abc', Infinity]) assert.equal(parseLimit(value), null);
++});
++test('all seed deals have consistent structured prices', () => {
++  for (const deal of deals) assert.ok(validateDeal(deal), deal.id);
++});
++test('Priya package remains $450 without invented whitelisting', () => {
++  const deal = { ...deals[1], messages: [{ text: 'The draft is ready' }] };
++  const terms = dealTerms(deal);
++  assert.equal(terms.find(t => t.label === 'Total').value, '$450');
++  assert.equal(terms.find(t => t.label === 'Add-on').value, 'None');
++});
++test('reject invalid and inconsistent quotes', () => {
++  assert.equal(validPrices({ short: -1 }), false);
++  assert.equal(validPrices({ short: NaN }), false);
++  assert.equal(validateDeal({ ...deals[0], amount: 1 }), false);
++  assert.equal(validateDeal({ ...deals[0], packageKey: 'unknown' }), false);
++});
+-- 
+2.51.1
+
