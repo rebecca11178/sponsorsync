@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { compact, usd, scoreTone } from "@/lib/format";
+import { compact, usd, scoreTone, startingPrice, bestPackageWithin } from "@/lib/format";
+import { loadAllOverrides, mergePricing } from "@/lib/pricing";
 import Avatar from "@/components/Avatar";
 
 const STEPS = ["Business", "Goal", "Audience", "Budget", "Brand", "Results"];
@@ -42,6 +43,7 @@ export default function MatchPage() {
   const [optimizing, setOptimizing] = useState(false);
   const [matching, setMatching] = useState(false);
   const [results, setResults] = useState(null);
+  const [error, setError] = useState(false);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -63,6 +65,7 @@ export default function MatchPage() {
   async function runMatch() {
     setMatching(true);
     setResults(null);
+    setError(false);
     setStep(5);
     try {
       const res = await fetch("/api/match", {
@@ -70,8 +73,11 @@ export default function MatchPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      if (!res.ok) throw new Error("request failed");
       const data = await res.json();
-      setResults(data.matches);
+      setResults(data);
+    } catch {
+      setError(true);
     } finally {
       setMatching(false);
     }
@@ -79,6 +85,10 @@ export default function MatchPage() {
 
   const next = () => setStep((s) => Math.min(s + 1, 5));
   const back = () => setStep((s) => Math.max(s - 1, 0));
+
+  // Client-side budget grouping so displayed prices honor creator-set overrides
+  // and the same pricing rules as every other page (P0-3, P0-4).
+  const groups = deriveGroups(form, results);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
@@ -249,25 +259,63 @@ export default function MatchPage() {
 
         {/* STEP 6 — Results */}
         {step === 5 && (
-          <div className="space-y-3">
-            <h2 className="font-semibold">Your best-fit creators</h2>
-            {matching && <p className="py-8 text-center text-sm text-muted">Analyzing creators against your brief…</p>}
-            {results?.map((m) => {
-              const tone = scoreTone(m.fit);
-              return (
-                <Link key={m.id} href={`/creators/${m.id}`} className="block rounded-2xl border border-border bg-surface p-5 hover:shadow-md">
-                  <div className="flex items-center gap-3">
-                    <Avatar name={m.name} size={48} />
-                    <div className="flex-1">
-                      <p className="font-semibold">{m.name}</p>
-                      <p className="text-xs text-muted">{compact(m.subscribers)} subs · from {usd(m.rates.dedicatedVideo)}</p>
-                    </div>
-                    <span className={`rounded-full px-2.5 py-1 text-sm font-semibold ${tone.bg} ${tone.text}`}>{m.fit}</span>
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-semibold">Best-fit creators</h2>
+              <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-medium text-warning">
+                Heuristic demo · real analysis runs on Gemini
+              </span>
+            </div>
+
+            {matching && <p className="py-10 text-center text-sm text-muted">Analyzing creators against your brief…</p>}
+
+            {!matching && error && (
+              <div className="rounded-xl border border-danger/30 bg-danger-soft/30 p-6 text-center">
+                <p className="text-sm font-medium text-danger">Couldn&apos;t run the analysis.</p>
+                <p className="mt-1 text-sm text-muted">The request failed — your answers are saved.</p>
+                <button onClick={runMatch} className="mt-3 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">Retry</button>
+              </div>
+            )}
+
+            {!matching && !error && groups && (
+              <>
+                {groups.missing.length > 0 && (
+                  <p className="rounded-lg bg-background px-3 py-2 text-xs text-muted">
+                    Scored on what you provided. For a sharper score, add: {groups.missing.join(", ")}.
+                  </p>
+                )}
+
+                {groups.within.length > 0 ? (
+                  groups.within.map((c) => <ResultCard key={c.id} c={c} />)
+                ) : (
+                  <div className="rounded-xl border border-border bg-background p-6 text-center">
+                    <p className="text-sm font-medium">
+                      No creator fits your {groups.cap === Infinity ? "budget" : usd(groups.cap)} cap.
+                    </p>
+                    <p className="mt-1 text-sm text-muted">Raise your budget or per-creator cap to see matches.</p>
+                    <button onClick={() => setStep(3)} className="mt-3 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">Adjust budget</button>
                   </div>
-                  <p className="mt-3 text-sm text-muted"><span className="font-medium text-foreground">Why:</span> {m.reason}</p>
-                </Link>
-              );
-            })}
+                )}
+
+                {groups.over.length > 0 && (
+                  <div className="pt-2">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted">Over your budget</p>
+                    <p className="mb-2 text-xs text-muted">Strong fits, but their cheapest package is above your cap.</p>
+                    <div className="space-y-3 opacity-80">
+                      {groups.over.map((c) => <ResultCard key={c.id} c={c} over />)}
+                    </div>
+                  </div>
+                )}
+
+                {groups.within.length === 0 && groups.over.length === 0 && (
+                  <div className="rounded-xl border border-border bg-background p-6 text-center">
+                    <p className="text-sm font-medium">No creators match your conditions.</p>
+                    <p className="mt-1 text-sm text-muted">Try lowering the minimum brand-safety, or widening tier / industry.</p>
+                    <button onClick={() => setStep(0)} className="mt-3 rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-surface">Change conditions</button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>
@@ -288,5 +336,55 @@ export default function MatchPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Split scored creators into within-budget vs over-budget using merged (creator-set)
+// prices, and pick a recommended package for each. Per-creator cap and total
+// budget are both enforced (whichever is tighter).
+function deriveGroups(form, results) {
+  if (!results?.creators) return null;
+  const overrides = typeof window !== "undefined" ? loadAllOverrides() : {};
+  const cap = Math.min(
+    Number(form.perCreatorCap) > 0 ? Number(form.perCreatorCap) : Infinity,
+    Number(form.budget) > 0 ? Number(form.budget) : Infinity
+  );
+  const within = [];
+  const over = [];
+  for (const c of results.creators) {
+    const rates = mergePricing({ id: c.id, rates: c.rates }, overrides).rates;
+    const from = startingPrice(rates);
+    const rec = bestPackageWithin(rates, cap);
+    const item = { ...c, from, rec };
+    if (from <= cap) within.push(item);
+    else over.push(item);
+  }
+  return { within, over, missing: results.missing || [], cap };
+}
+
+function ResultCard({ c, over }) {
+  const tone = scoreTone(c.fit);
+  return (
+    <Link href={`/creators/${c.id}`} className="block rounded-2xl border border-border bg-surface p-5 hover:shadow-md">
+      <div className="flex items-center gap-3">
+        <Avatar name={c.name} size={48} />
+        <div className="flex-1">
+          <p className="font-semibold">{c.name}</p>
+          <p className="text-xs text-muted">{compact(c.subscribers)} subs · from {usd(c.from)}</p>
+        </div>
+        <span className={`rounded-full px-2.5 py-1 text-sm font-semibold ${tone.bg} ${tone.text}`}>{c.fit}</span>
+      </div>
+      {c.rec ? (
+        <p className="mt-3 text-sm"><span className="font-medium">Recommended:</span> {c.rec.label} — {usd(c.rec.price)}</p>
+      ) : over ? (
+        <p className="mt-3 text-sm text-danger">Cheapest package {usd(c.from)} is above your cap</p>
+      ) : null}
+      <ul className="mt-2 space-y-1 text-sm text-muted">
+        {c.reasons.slice(0, 3).map((r, i) => <li key={i}>• {r}</li>)}
+      </ul>
+      {c.matchedVideos?.length > 0 && (
+        <p className="mt-2 text-xs text-muted">Top matched video: &ldquo;{c.matchedVideos[0].title}&rdquo; (fit {c.matchedVideos[0].fit})</p>
+      )}
+    </Link>
   );
 }

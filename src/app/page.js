@@ -30,10 +30,10 @@ const pillars = [
 ];
 
 const stats = [
-  { value: "$32.6B", label: "creator marketing market size (2025)" },
-  { value: "78%", label: "say YouTube has the most trusted creators" },
-  { value: "36.7%", label: "of brands use YouTube for influencer marketing" },
-  { value: "+30%", label: "avg. conversion lift from creator videos on Shorts" },
+  { value: "$32.6B", label: "creator-marketing market size", src: "Influencer Marketing Hub, 2025" },
+  { value: "78%", label: "say YouTube has the most trusted creators", src: "YouTube NewFronts, 2026" },
+  { value: "36.7%", label: "of brands use YouTube for influencer marketing", src: "industry survey, 2025" },
+  { value: "+30%", label: "avg. conversion lift, creator videos on Shorts", src: "YouTube, Jan 2025–Jan 2026" },
 ];
 
 const comparison = [
@@ -77,6 +77,7 @@ export default function Home() {
             <div key={s.label} className="bg-surface p-5">
               <p className={`text-2xl font-bold ${["text-g-blue", "text-g-red", "text-g-yellow", "text-g-green"][i % 4]}`}>{s.value}</p>
               <p className="mt-1 text-xs text-muted">{s.label}</p>
+              <p className="mt-1 text-[10px] text-muted/80">Source: {s.src}</p>
             </div>
           ))}
         </div>
@@ -140,6 +141,10 @@ export default function Home() {
             </tbody>
           </table>
         </div>
+        <p className="mt-3 text-xs text-muted">
+          Comparison of YouTube Creator Partnerships vs TikTok Creator Marketplace, as of 2026. ✓ = capability offered to small advertisers today.
+          The SponsorSync column reflects features demonstrated in this prototype.
+        </p>
       </section>
 
       {/* CTA band */}

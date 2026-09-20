@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { creators } from "@/lib/mockData";
 import { compact, usd, scoreTone } from "@/lib/format";
+import { loadAllOverrides, mergePricing } from "@/lib/pricing";
 import Avatar from "@/components/Avatar";
 
 const tiers = ["All", "Nano", "Micro", "Mid-tier"];
@@ -11,12 +12,16 @@ const tiers = ["All", "Nano", "Micro", "Mid-tier"];
 export default function CreatorsPage() {
   const [tier, setTier] = useState("All");
   const [maxPrice, setMaxPrice] = useState(10000);
+  const [overrides, setOverrides] = useState({});
+
+  // Reflect creator-set prices so the list matches each creator's detail page (P0-3).
+  useEffect(() => setOverrides(loadAllOverrides()), []);
 
   const list = useMemo(() => {
-    return creators.filter(
-      (c) => (tier === "All" || c.tier === tier) && c.rates.dedicatedVideo <= maxPrice
-    );
-  }, [tier, maxPrice]);
+    return creators
+      .map((c) => ({ ...c, rates: mergePricing(c, overrides).rates }))
+      .filter((c) => (tier === "All" || c.tier === tier) && c.rates.dedicatedVideo <= maxPrice);
+  }, [tier, maxPrice, overrides]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -76,7 +81,7 @@ export default function CreatorsPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{c.name}</h3>
-                    {c.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">✓ Verified</span>}
+                    {c.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">✓ Channel verified</span>}
                   </div>
                   <p className="text-sm text-muted">{c.handle} · {c.niche}</p>
                   <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">

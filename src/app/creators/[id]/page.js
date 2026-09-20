@@ -51,7 +51,7 @@ export default function CreatorDetail() {
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-semibold">{c.name}</h1>
-                {c.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">✓ Verified</span>}
+                {c.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success" title="YouTube channel ownership confirmed">✓ Channel verified</span>}
               </div>
               <p className="text-sm text-muted">{c.handle} · {c.niche} · {c.location}</p>
               <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">

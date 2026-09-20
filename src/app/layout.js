@@ -22,8 +22,12 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <NavBar />
           <main className="flex-1 w-full">{children}</main>
-          <footer className="border-t border-border py-6 text-center text-sm text-muted">
-            {APP_NAME} · Prototype for the NYU SPS × Google Hackathon (Track 2)
+          <footer className="border-t border-border px-4 py-6 text-center text-xs text-muted">
+            <p>{APP_NAME} · Prototype for the NYU SPS × Google Hackathon (Track 2)</p>
+            <p className="mx-auto mt-2 max-w-3xl leading-relaxed">
+              All profiles, follower counts, prices and match scores are <strong>sample data for demonstration only</strong>.
+              &ldquo;Business verified&rdquo; = company-email check · &ldquo;Channel verified&rdquo; = YouTube channel ownership.
+            </p>
           </footer>
         </AuthProvider>
       </body>
