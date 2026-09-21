@@ -40,7 +40,7 @@ export default function SponsorSignup() {
           <input
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            placeholder="Godfather"
+            placeholder="BrightLeaf Tea Co."
             className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-brand"
           />
         </div>

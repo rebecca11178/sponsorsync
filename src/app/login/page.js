@@ -34,7 +34,7 @@ export default function LoginPage() {
       <form onSubmit={submit} className="mt-6 space-y-4 rounded-2xl border border-border bg-surface p-6">
         <div>
           <label className="text-sm font-medium">Username</label>
-          <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Godfather"
+          <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="BrightLeaf Tea Co."
             className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-brand" />
         </div>
         <div>
@@ -65,7 +65,7 @@ export default function LoginPage() {
         ))}
       </div>
       <p className="mt-4 text-center text-xs text-muted">
-        Usernames: <code className="rounded bg-background px-1">Godfather</code> / <code className="rounded bg-background px-1">Lena Park</code> · password <code className="rounded bg-background px-1">admin</code>
+        Usernames: <code className="rounded bg-background px-1">BrightLeaf Tea Co.</code> / <code className="rounded bg-background px-1">Maya Chen</code> · password <code className="rounded bg-background px-1">admin</code>
       </p>
 
       <div className="mt-6 flex flex-col items-center gap-2 text-center text-sm text-muted">

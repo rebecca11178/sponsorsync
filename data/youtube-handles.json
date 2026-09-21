@@ -1,5 +1,3 @@
 {
-  "_readme": "creator_id → 真实 YouTube handle。列在这里的人会实时拉取视频，其余用名单里的演示视频。表格里的 youtube_handle 列优先级更高。建议只填 2-3 个：每人每次匹配消耗 3 个配额单位并增加耗时。人物资料和报价仍是虚构的，只有视频是真的。",
-  "maya-chen": "@JoshuaWeissman",
-  "isabel-cruz": "@Ethanchlebowski"
+  "_readme": "creator_id → 真实 YouTube handle。留空表示所有创作者都用虚构演示数据（推荐，避免用真人频道包装虚构身份）。要现场演示真实 Gemini 看视频，只填入你自己拥有或已获授权的频道，例如 \"maya-chen\": \"@yourchannel\"。"
 }

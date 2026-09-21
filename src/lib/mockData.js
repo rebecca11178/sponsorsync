@@ -8,9 +8,9 @@ import { creators } from "./creators.generated.js";
 // The logged-in SMB (mock). In production this comes from auth + company-email
 // verification. `verified` drives the "Verified Sponsor" trust badge.
 export const currentSponsor = {
-  company: "Godfather",
-  email: "admin@godfather.co",
-  domain: "godfather.co",
+  company: "BrightLeaf Tea Co.",
+  email: "admin@brightleaftea.co",
+  domain: "brightleaftea.co",
   verified: true,
   industry: "DTC Food & Beverage",
   budget: 6000,
@@ -40,7 +40,7 @@ export const deals = [
   {
     id: "d1",
     creatorId: "c1",
-    sponsor: "Godfather",
+    sponsor: "BrightLeaf Tea Co.",
     sponsorEmoji: "🍃",
     status: "chatroom", // enquiry → chatroom → contracted → in_production → in_review → completed
     package: "Dedicated video + whitelisting",
@@ -67,7 +67,7 @@ export const deals = [
   {
     id: "d2",
     creatorId: "c3",
-    sponsor: "Godfather",
+    sponsor: "BrightLeaf Tea Co.",
     sponsorEmoji: "🍃",
     status: "in_review",
     package: "Integrated video",
@@ -124,7 +124,7 @@ export const enquiries = [
   {
     id: "e1",
     dealId: "d1",
-    sponsor: "Godfather",
+    sponsor: "BrightLeaf Tea Co.",
     verified: true,
     industry: "DTC Food & Beverage",
     package: "Dedicated video + whitelisting",

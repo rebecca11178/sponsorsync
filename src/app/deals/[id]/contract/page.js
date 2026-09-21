@@ -78,7 +78,7 @@ export default function ContractPage() {
             <div className="mt-8 grid grid-cols-2 gap-6 border-t border-border pt-6 text-sm">
               <div>
                 <div className={`h-10 ${signed ? "font-[cursive] text-lg text-foreground" : ""}`}>
-                  {signed ? "Godfather" : ""}
+                  {signed ? "BrightLeaf Tea Co." : ""}
                 </div>
                 <p className="border-t border-border pt-1 text-muted">Brand signature</p>
               </div>

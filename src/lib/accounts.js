@@ -10,9 +10,9 @@ export const ACCOUNTS = [
   {
     id: "sponsor-admin",
     role: "sponsor",
-    username: "Godfather",
-    name: "Godfather",
-    email: "admin@godfather.co",
+    username: "BrightLeaf Tea Co.",
+    name: "BrightLeaf Tea Co.",
+    email: "admin@brightleaftea.co",
     password: "admin",
     emoji: "🍃",
     verified: true,

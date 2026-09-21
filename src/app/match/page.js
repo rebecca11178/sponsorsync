@@ -123,11 +123,11 @@ export default function MatchPage() {
             <h2 className="font-semibold">Let&apos;s start with your business</h2>
             <label className="block">
               <span className="text-sm font-medium">Business name</span>
-              <input value={form.businessName} onChange={set("businessName")} placeholder="Godfather" className={inputCls} />
+              <input value={form.businessName} onChange={set("businessName")} placeholder="BrightLeaf Tea Co." className={inputCls} />
             </label>
             <label className="block">
               <span className="text-sm font-medium">Website</span>
-              <input value={form.website} onChange={set("website")} placeholder="https://godfather.co" className={inputCls} />
+              <input value={form.website} onChange={set("website")} placeholder="https://brightleaftea.co" className={inputCls} />
             </label>
             <label className="block">
               <span className="text-sm font-medium">Industry</span>
