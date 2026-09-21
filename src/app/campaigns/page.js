@@ -170,6 +170,28 @@ function DetailDrawer({ deal, onClose }) {
         <div className="space-y-6 p-5">
           <StatusTimeline current={deal.status} />
 
+          {deal.deliverable && (
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-wide text-muted">Deliverable</p>
+              <div className="mt-2 overflow-hidden rounded-xl border border-border">
+                <div className="flex aspect-video items-center justify-center bg-foreground/5">
+                  <span className="grid h-12 w-12 place-items-center rounded-full bg-foreground/70">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="white" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" /></svg>
+                  </span>
+                </div>
+                <div className="p-3">
+                  <p className="text-sm font-medium">{deal.deliverable.title}</p>
+                  <p className="text-xs text-muted">Delivered {deal.deliverable.deliveredDaysAgo}d ago · {deal.deliverable.lengthMin} min</p>
+                </div>
+              </div>
+              {deal.deliverable.reviewVerdict === "pass" ? (
+                <p className="mt-2 text-xs text-success">AI content review passed — compliant with the agreed terms.</p>
+              ) : (
+                <p className="mt-2 text-xs text-muted">Not reviewed yet — run the Gemini content check below.</p>
+              )}
+            </div>
+          )}
+
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wide text-muted">Attributes</p>
             <dl className="mt-2">
@@ -198,13 +220,18 @@ function DetailDrawer({ deal, onClose }) {
         <div className="mt-auto flex gap-2 border-t border-border p-5">
           {isDraft ? (
             <Link href="/match" className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-dark">Finish setup</Link>
-          ) : (
+          ) : deal.status === "in_review" ? (
             <>
-              <Link href={`/deals/${deal.id}`} className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-dark">Open deal</Link>
-              {deal.status === "completed" && (
-                <Link href={`/deals/${deal.id}/performance`} className="flex-1 rounded-lg border border-border px-4 py-2.5 text-center text-sm font-medium hover:bg-background">Performance</Link>
-              )}
+              <Link href={`/deals/${deal.id}/review`} className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-dark">Review with Gemini</Link>
+              <Link href={`/deals/${deal.id}`} className="flex-1 rounded-lg border border-border px-4 py-2.5 text-center text-sm font-medium hover:bg-background">Open deal</Link>
             </>
+          ) : deal.status === "completed" ? (
+            <>
+              <Link href={`/deals/${deal.id}/performance`} className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-dark">Performance</Link>
+              <Link href={`/deals/${deal.id}/review`} className="flex-1 rounded-lg border border-border px-4 py-2.5 text-center text-sm font-medium hover:bg-background">Content review</Link>
+            </>
+          ) : (
+            <Link href={`/deals/${deal.id}`} className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-dark">Open deal</Link>
           )}
         </div>
       </aside>

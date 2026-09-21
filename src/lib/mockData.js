@@ -72,6 +72,7 @@ export const deals = [
     status: "in_review",
     package: "Integrated video",
     amount: 450,
+    deliverable: { title: "My 8pm wind-down routine (ad)", lengthMin: 9, deliveredDaysAgo: 2, url: "" },
     terms: [
       { label: "Deliverable", value: "~60s integration of the caffeine-free tea in a wind-down video" },
       { label: "Base price", value: "$450" },
@@ -104,6 +105,7 @@ export const deals = [
     status: "completed",
     package: "Integrated video",
     amount: 340,
+    deliverable: { title: "3 loose-leaf teas I'm obsessed with (ad)", lengthMin: 8, deliveredDaysAgo: 12, url: "", reviewVerdict: "pass" },
     terms: [
       { label: "Deliverable", value: "60s integration of our loose-leaf sampler" },
       { label: "Base price", value: "$340" },
