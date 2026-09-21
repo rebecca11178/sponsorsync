@@ -362,13 +362,15 @@ function deriveGroups(form, results) {
   return { within, over, missing: results.missing || [], cap };
 }
 
+// Risk level → label, text color, and marker position on the deep→light scale.
 const RISK = {
-  high: { label: "High risk", cls: "bg-danger-soft text-danger" },
-  medium: { label: "Medium risk", cls: "bg-warning-soft text-warning" },
-  "low-medium": { label: "Low–medium risk", cls: "bg-warning-soft text-warning" },
-  low: { label: "Low risk", cls: "bg-success-soft text-success" },
+  high: { label: "High", text: "text-danger", pos: 12 },
+  medium: { label: "Medium", text: "text-warning", pos: 38 },
+  "low-medium": { label: "Low–medium", text: "text-warning", pos: 63 },
+  low: { label: "Low", text: "text-success", pos: 88 },
 };
-const CHK = { ok: ["✓", "text-success"], warn: ["!", "text-warning"], fail: ["✕", "text-danger"] };
+const RISK_GRADIENT = "linear-gradient(to right,#dc2626 0%,#ea580c 33%,#f59e0b 66%,#16a34a 100%)";
+const DOT = { ok: "#16a34a", warn: "#d97706", fail: "#dc2626" };
 const VET_STAGES = [
   "Fetching recent videos…",
   "Watching a recent video…",
@@ -437,12 +439,15 @@ function ResultCard({ c, over }) {
       {/* Brand-safety risk — on demand (Gemini watches a video, ~1 min) */}
       <div className="mt-4 border-t border-border pt-3">
         {!vet && !loading && (
-          <button
-            onClick={evaluateRisk}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand bg-brand-soft px-4 py-2 text-sm font-semibold text-brand hover:bg-brand-soft/70"
-          >
-            🛡 Evaluate brand-safety risk
-          </button>
+          <div>
+            <button
+              onClick={evaluateRisk}
+              className="w-full rounded-lg border border-brand bg-brand-soft px-4 py-2 text-sm font-semibold text-brand hover:bg-brand-soft/70"
+            >
+              Evaluate brand-safety risk
+            </button>
+            <p className="mt-1.5 text-center text-[11px] text-muted">AI review by Gemini · watches a recent video (~1 min)</p>
+          </div>
         )}
 
         {loading && (
@@ -461,22 +466,43 @@ function ResultCard({ c, over }) {
         {vet && !vet.error && (
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold">Brand-safety risk</span>
-              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${risk.cls}`}>{risk.label}</span>
+              <span className="flex items-center gap-2 text-sm font-semibold">
+                Brand-safety risk
+                <span className="rounded-full bg-brand-soft px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand">Gemini</span>
+              </span>
+              <span className={`text-xs font-semibold uppercase tracking-wide ${risk.text}`}>{risk.label} risk</span>
             </div>
-            {vet.summary && <p className="mt-1.5 text-sm text-muted">{vet.summary}</p>}
-            <ul className="mt-2 space-y-1.5">
+
+            {/* Deep→light severity scale with a marker at this creator's level */}
+            <div className="relative mt-2 h-1.5 rounded-full" style={{ background: RISK_GRADIENT }}>
+              <span
+                className="absolute -top-1 h-3.5 w-1 rounded-full bg-foreground ring-2 ring-surface"
+                style={{ left: `${risk.pos}%`, transform: "translateX(-50%)" }}
+              />
+            </div>
+            <div className="mt-1 flex justify-between text-[10px] uppercase tracking-wide text-muted">
+              <span>High</span>
+              <span>Low</span>
+            </div>
+
+            {vet.summary && <p className="mt-3 text-xs leading-snug text-muted">{vet.summary}</p>}
+
+            <ul className="mt-2.5 space-y-2">
               {vet.checks?.map((it, i) => (
-                <li key={i} className="flex gap-2 text-sm">
-                  <span className={CHK[it.status]?.[1]}>{CHK[it.status]?.[0]}</span>
-                  <span><span className="font-medium">{it.label}</span> — <span className="text-muted">{it.note}</span></span>
+                <li key={i} className="flex items-start gap-2 text-xs leading-snug">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: DOT[it.status] || DOT.warn }} />
+                  <span>
+                    <span className="font-medium text-foreground">{it.label}</span>
+                    <span className="text-muted"> — {it.note}</span>
+                  </span>
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-[11px] text-muted">
+
+            <p className="mt-3 text-[10px] text-muted">
               {vet.source === "gemini"
-                ? `Real analysis of ${vet.video?.title ? `“${vet.video.title}”` : "a recent video"} via Gemini.`
-                : "Sample result — connect a real YouTube channel to run the live check."}
+                ? `Live analysis via Gemini${vet.video?.title ? ` · “${vet.video.title}”` : ""}.`
+                : "Sample result — connect a real YouTube channel for a live check."}
             </p>
           </div>
         )}
