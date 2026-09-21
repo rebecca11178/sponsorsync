@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getDeal, getCreator } from "@/lib/mockData";
+import GeminiProgress from "@/components/GeminiProgress";
 
 export default function ContractPage() {
   const { id } = useParams();
@@ -44,8 +45,8 @@ export default function ContractPage() {
       </p>
 
       {loading ? (
-        <div className="mt-6 grid place-items-center rounded-2xl border border-border bg-surface p-16 text-sm text-muted">
-          Drafting the agreement…
+        <div className="mt-6 rounded-2xl border border-border bg-surface p-8">
+          <GeminiProgress stages={["Reading the agreed terms…", "Drafting the clauses…", "Marking anything unsettled…"]} note="Gemini is drafting the agreement — a few seconds." />
         </div>
       ) : (
         <>

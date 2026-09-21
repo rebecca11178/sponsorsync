@@ -5,6 +5,7 @@ import Link from "next/link";
 import { compact, usd, scoreTone, startingPrice, bestPackageWithin } from "@/lib/format";
 import { loadAllOverrides, mergePricing } from "@/lib/pricing";
 import Avatar from "@/components/Avatar";
+import GeminiProgress from "@/components/GeminiProgress";
 
 const STEPS = ["Business", "Goal", "Audience", "Budget", "Brand", "Results"];
 
@@ -237,8 +238,9 @@ export default function MatchPage() {
                 placeholder="Describe your brand voice and what must be covered…" className={`${inputCls} resize-none`} />
               <button type="button" onClick={optimizeBrief} disabled={optimizing}
                 className="mt-2 text-xs font-medium text-brand hover:underline disabled:opacity-50">
-                {optimizing ? "Optimizing…" : "✨ Improve this with Gemini"}
+                {optimizing ? "Improving…" : "Improve this with Gemini"}
               </button>
+              {optimizing && <GeminiProgress className="mt-2" stages={["Reading your notes…", "Tightening the brief…"]} note="Gemini is rewriting your brief — a few seconds." />}
             </label>
             <label className="block">
               <span className="text-sm font-medium">Content to avoid</span>
@@ -267,7 +269,13 @@ export default function MatchPage() {
               {results && <AnalysisBadge method={results.method} videoSource={results.videoSource} />}
             </div>
 
-            {matching && <p className="py-10 text-center text-sm text-muted">Analyzing creators against your brief…</p>}
+            {matching && (
+              <GeminiProgress
+                className="py-6"
+                stages={["Pulling candidate creators…", "Reading their recent videos…", "Scoring fit with Gemini…", "Ranking your shortlist…"]}
+                note="Gemini is analysing recent videos against your brief — up to a minute."
+              />
+            )}
 
             {!matching && error && (
               <div className="rounded-xl border border-danger/30 bg-danger-soft/30 p-6 text-center">
@@ -383,19 +391,10 @@ function ResultCard({ c, over }) {
   const tone = scoreTone(c.fit);
   const [vet, setVet] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [stage, setStage] = useState(VET_STAGES[0]);
 
   async function evaluateRisk() {
     setLoading(true);
     setVet(null);
-    setProgress(6);
-    let s = 0;
-    setStage(VET_STAGES[0]);
-    const iv = setInterval(() => {
-      setProgress((p) => Math.min(93, p + (p < 60 ? 4 : 2)));
-      if (Math.random() < 0.4) { s = Math.min(VET_STAGES.length - 1, s + 1); setStage(VET_STAGES[s]); }
-    }, 850);
     try {
       const res = await fetch("/api/vet", {
         method: "POST",
@@ -406,8 +405,6 @@ function ResultCard({ c, over }) {
     } catch {
       setVet({ error: true });
     } finally {
-      clearInterval(iv);
-      setProgress(100);
       setLoading(false);
     }
   }
@@ -450,18 +447,7 @@ function ResultCard({ c, over }) {
           </div>
         )}
 
-        {loading && (
-          <div>
-            <div className="flex items-center justify-between text-xs text-muted">
-              <span>{stage}</span>
-              <span>{progress}%</span>
-            </div>
-            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-background">
-              <div className="h-full rounded-full bg-brand transition-[width] duration-700 ease-out" style={{ width: `${progress}%` }} />
-            </div>
-            <p className="mt-1.5 text-[11px] text-muted">Gemini is reviewing a recent video — about a minute.</p>
-          </div>
-        )}
+        {loading && <GeminiProgress stages={VET_STAGES} note="Gemini is reviewing a recent video — about a minute." />}
 
         {vet && !vet.error && (
           <div>

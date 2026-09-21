@@ -8,6 +8,7 @@ import { usd } from "@/lib/format";
 import StatusTimeline from "@/components/StatusTimeline";
 import { useAuth } from "@/components/AuthProvider";
 import Avatar from "@/components/Avatar";
+import GeminiProgress from "@/components/GeminiProgress";
 
 export default function DealChatroom() {
   const { id } = useParams();
@@ -107,8 +108,11 @@ export default function DealChatroom() {
             </p>
             <button onClick={summarize} disabled={summarizing}
               className="mt-3 w-full rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60">
-              {summarizing ? "Reading chat…" : "✨ Summarize with Gemini"}
+              {summarizing ? "Summarizing…" : "Summarize with Gemini"}
             </button>
+            {summarizing && (
+              <GeminiProgress className="mt-3" stages={["Reading the conversation…", "Extracting agreed terms…", "Flagging open questions…"]} note="Gemini is reading the chat — a few seconds." />
+            )}
 
             {terms && (
               <dl className="mt-4 space-y-2 text-sm">

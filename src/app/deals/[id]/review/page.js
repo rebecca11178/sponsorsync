@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getDeal, getCreator } from "@/lib/mockData";
+import GeminiProgress from "@/components/GeminiProgress";
 
 export default function OrderReview() {
   const { id } = useParams();
@@ -47,6 +48,15 @@ export default function OrderReview() {
           {running ? "Reviewing…" : "Run review"}
         </button>
       </div>
+
+      {running && (
+        <div className="mt-4 rounded-2xl border border-border bg-surface p-5">
+          <GeminiProgress
+            stages={["Fetching the video from YouTube…", "Watching the video…", "Checking claims & disclosure…", "Matching against the contract…", "Writing the review…"]}
+            note="Gemini is watching the full video — this can take a minute or two."
+          />
+        </div>
+      )}
 
       {result && (
         <div className="mt-6 space-y-4">
