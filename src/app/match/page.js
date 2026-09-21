@@ -362,14 +362,62 @@ function deriveGroups(form, results) {
   return { within, over, missing: results.missing || [], cap };
 }
 
+const RISK = {
+  high: { label: "High risk", cls: "bg-danger-soft text-danger" },
+  medium: { label: "Medium risk", cls: "bg-warning-soft text-warning" },
+  "low-medium": { label: "Low–medium risk", cls: "bg-warning-soft text-warning" },
+  low: { label: "Low risk", cls: "bg-success-soft text-success" },
+};
+const CHK = { ok: ["✓", "text-success"], warn: ["!", "text-warning"], fail: ["✕", "text-danger"] };
+const VET_STAGES = [
+  "Fetching recent videos…",
+  "Watching a recent video…",
+  "Checking disclosure & claims…",
+  "Assessing brand safety…",
+  "Scoring the risk…",
+];
+
 function ResultCard({ c, over }) {
   const tone = scoreTone(c.fit);
+  const [vet, setVet] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [stage, setStage] = useState(VET_STAGES[0]);
+
+  async function evaluateRisk() {
+    setLoading(true);
+    setVet(null);
+    setProgress(6);
+    let s = 0;
+    setStage(VET_STAGES[0]);
+    const iv = setInterval(() => {
+      setProgress((p) => Math.min(93, p + (p < 60 ? 4 : 2)));
+      if (Math.random() < 0.4) { s = Math.min(VET_STAGES.length - 1, s + 1); setStage(VET_STAGES[s]); }
+    }, 850);
+    try {
+      const res = await fetch("/api/vet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ creatorId: c.id }),
+      });
+      setVet(await res.json());
+    } catch {
+      setVet({ error: true });
+    } finally {
+      clearInterval(iv);
+      setProgress(100);
+      setLoading(false);
+    }
+  }
+
+  const risk = vet && !vet.error ? RISK[vet.risk] || RISK.medium : null;
+
   return (
-    <Link href={`/creators/${c.id}`} className="block rounded-2xl border border-border bg-surface p-5 hover:shadow-md">
+    <div className="rounded-2xl border border-border bg-surface p-5">
       <div className="flex items-center gap-3">
         <Avatar name={c.name} size={48} />
         <div className="flex-1">
-          <p className="font-semibold">{c.name}</p>
+          <Link href={`/creators/${c.id}`} className="font-semibold hover:underline">{c.name}</Link>
           <p className="text-xs text-muted">{compact(c.subscribers)} subs · from {usd(c.from)}</p>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-sm font-semibold ${tone.bg} ${tone.text}`}>{c.fit}</span>
@@ -385,7 +433,62 @@ function ResultCard({ c, over }) {
       {c.matchedVideos?.length > 0 && (
         <p className="mt-2 text-xs text-muted">Top matched video: &ldquo;{c.matchedVideos[0].title}&rdquo; (fit {c.matchedVideos[0].fit})</p>
       )}
-    </Link>
+
+      {/* Brand-safety risk — on demand (Gemini watches a video, ~1 min) */}
+      <div className="mt-4 border-t border-border pt-3">
+        {!vet && !loading && (
+          <button
+            onClick={evaluateRisk}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand bg-brand-soft px-4 py-2 text-sm font-semibold text-brand hover:bg-brand-soft/70"
+          >
+            🛡 Evaluate brand-safety risk
+          </button>
+        )}
+
+        {loading && (
+          <div>
+            <div className="flex items-center justify-between text-xs text-muted">
+              <span>{stage}</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-background">
+              <div className="h-full rounded-full bg-brand transition-[width] duration-700 ease-out" style={{ width: `${progress}%` }} />
+            </div>
+            <p className="mt-1.5 text-[11px] text-muted">Gemini is reviewing a recent video — about a minute.</p>
+          </div>
+        )}
+
+        {vet && !vet.error && (
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold">Brand-safety risk</span>
+              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${risk.cls}`}>{risk.label}</span>
+            </div>
+            {vet.summary && <p className="mt-1.5 text-sm text-muted">{vet.summary}</p>}
+            <ul className="mt-2 space-y-1.5">
+              {vet.checks?.map((it, i) => (
+                <li key={i} className="flex gap-2 text-sm">
+                  <span className={CHK[it.status]?.[1]}>{CHK[it.status]?.[0]}</span>
+                  <span><span className="font-medium">{it.label}</span> — <span className="text-muted">{it.note}</span></span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-[11px] text-muted">
+              {vet.source === "gemini"
+                ? `Real analysis of ${vet.video?.title ? `“${vet.video.title}”` : "a recent video"} via Gemini.`
+                : "Sample result — connect a real YouTube channel to run the live check."}
+            </p>
+          </div>
+        )}
+
+        {vet?.error && (
+          <div className="text-sm">
+            <p className="text-danger">Couldn&apos;t run the risk check.</p>
+            <button onClick={evaluateRisk} className="mt-1 font-medium text-brand hover:underline">Retry</button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
