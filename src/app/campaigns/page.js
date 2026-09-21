@@ -5,6 +5,7 @@ import Link from "next/link";
 import { currentSponsor, deals, getCreator } from "@/lib/mockData";
 import { usd } from "@/lib/format";
 import Avatar from "@/components/Avatar";
+import StatusTimeline from "@/components/StatusTimeline";
 
 // One colour per lifecycle stage — the row's status chip.
 const STATUS = {
@@ -36,7 +37,9 @@ function Chip({ status }) {
 
 export default function CampaignsPage() {
   const [filter, setFilter] = useState("all");
+  const [selId, setSelId] = useState(null);
   const mine = deals.filter((d) => d.sponsor === currentSponsor.company);
+  const sel = selId ? mine.find((d) => d.id === selId) : null;
 
   const committed = mine.filter((d) => d.status !== "draft").reduce((s, d) => s + (d.amount || 0), 0);
   const kpis = [
@@ -58,12 +61,12 @@ export default function CampaignsPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-semibold">{currentSponsor.company}</h1>
               {currentSponsor.verified && (
-                <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">✓ Business verified</span>
+                <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">Business verified</span>
               )}
             </div>
             <p className="text-xs text-muted">FY26 · Creator sponsorships · {currentSponsor.industry}</p>
           </div>
-          <Link href="/sponsor/profile" className="text-sm font-medium text-brand hover:underline">View profile →</Link>
+          <Link href="/sponsor/profile" className="text-sm font-medium text-brand hover:underline">View profile</Link>
         </div>
       </div>
 
@@ -71,24 +74,24 @@ export default function CampaignsPage() {
       <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {kpis.map((k) => (
           <div key={k.label} className="rounded-2xl border border-border bg-surface p-4">
-            <p className="text-xs text-muted">{k.label}</p>
-            <p className="mt-1 text-2xl font-semibold">{k.value}</p>
+            <p className="text-xs uppercase tracking-wide text-muted">{k.label}</p>
+            <p className="mt-1 text-2xl font-semibold tracking-tight">{k.value}</p>
             <p className="text-[11px] text-muted">{k.sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Toolbar: filters + new */}
+      {/* Toolbar */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-1">
           {FILTERS.map((f) => (
             <button key={f.key} onClick={() => setFilter(f.key)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium ${filter === f.key ? "bg-brand text-white" : "text-muted hover:bg-background"}`}>
+              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${filter === f.key ? "bg-brand text-white" : "text-muted hover:bg-background"}`}>
               {f.label}
             </button>
           ))}
         </div>
-        <Link href="/match" className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">+ New campaign</Link>
+        <Link href="/match" className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">New campaign</Link>
       </div>
 
       {/* Table */}
@@ -105,10 +108,9 @@ export default function CampaignsPage() {
         {rows.map((d) => {
           const c = getCreator(d.creatorId);
           const isDraft = d.status === "draft";
-          const href = isDraft ? "/match" : `/deals/${d.id}`;
           return (
-            <Link key={d.id} href={href}
-              className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-border px-4 py-3 last:border-0 hover:bg-background sm:grid-cols-[1.6fr_1.4fr_150px_130px]">
+            <button key={d.id} onClick={() => setSelId(d.id)}
+              className={`grid w-full grid-cols-[1fr_auto] items-center gap-3 border-b border-border px-4 py-3 text-left last:border-0 hover:bg-background sm:grid-cols-[1.6fr_1.4fr_150px_130px] ${selId === d.id ? "bg-background" : ""}`}>
               <div className="flex min-w-0 items-center gap-3">
                 <Avatar name={c?.name || "?"} size={36} />
                 <div className="min-w-0">
@@ -124,13 +126,88 @@ export default function CampaignsPage() {
               <div className="flex items-center justify-end gap-2">
                 <span className="sm:hidden"><Chip status={d.status} /></span>
                 <span className="text-right text-sm font-medium">
-                  {isDraft ? <span className="text-brand">Finish setup →</span> : usd(d.amount)}
+                  {isDraft ? <span className="text-brand">Finish setup</span> : usd(d.amount)}
                 </span>
               </div>
-            </Link>
+            </button>
           );
         })}
       </div>
+
+      {sel && <DetailDrawer deal={sel} onClose={() => setSelId(null)} />}
     </div>
+  );
+}
+
+function Row({ label, value }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 border-b border-border py-2 last:border-0">
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="text-right text-sm font-medium">{value}</dd>
+    </div>
+  );
+}
+
+function DetailDrawer({ deal, onClose }) {
+  const c = getCreator(deal.creatorId);
+  const isDraft = deal.status === "draft";
+  return (
+    <>
+      <div className="fixed inset-0 z-30 bg-black/20" onClick={onClose} />
+      <aside className="fixed right-0 top-0 z-40 flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border bg-surface shadow-2xl">
+        <div className="flex items-start justify-between gap-3 border-b border-border p-5">
+          <div className="flex items-center gap-3">
+            <Avatar name={c?.name || "?"} size={44} />
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-muted">Campaign</p>
+              <h2 className="text-lg font-semibold">{c?.name || "Creator TBD"}</h2>
+              <div className="mt-1"><Chip status={deal.status} /></div>
+            </div>
+          </div>
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-lg text-muted hover:bg-background">✕</button>
+        </div>
+
+        <div className="space-y-6 p-5">
+          <StatusTimeline current={deal.status} />
+
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wide text-muted">Attributes</p>
+            <dl className="mt-2">
+              <Row label="Package" value={deal.package} />
+              <Row label="Budget" value={isDraft ? "Not set" : usd(deal.amount)} />
+              <Row label="Status" value={STATUS[deal.status]?.label} />
+              {c && <Row label="Tier" value={c.tier} />}
+              {c && <Row label="Channel" value={c.handle} />}
+            </dl>
+          </div>
+
+          {deal.terms?.length > 0 && (
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-wide text-muted">Agreed terms</p>
+              <dl className="mt-2">
+                {deal.terms.map((t) => <Row key={t.label} label={t.label} value={t.value} />)}
+              </dl>
+            </div>
+          )}
+
+          {isDraft && deal.draftNote && (
+            <p className="rounded-lg bg-background px-3 py-2 text-xs text-muted">To finish: {deal.draftNote}.</p>
+          )}
+        </div>
+
+        <div className="mt-auto flex gap-2 border-t border-border p-5">
+          {isDraft ? (
+            <Link href="/match" className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-dark">Finish setup</Link>
+          ) : (
+            <>
+              <Link href={`/deals/${deal.id}`} className="flex-1 rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-dark">Open deal</Link>
+              {deal.status === "completed" && (
+                <Link href={`/deals/${deal.id}/performance`} className="flex-1 rounded-lg border border-border px-4 py-2.5 text-center text-sm font-medium hover:bg-background">Performance</Link>
+              )}
+            </>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }

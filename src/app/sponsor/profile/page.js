@@ -25,14 +25,14 @@ export default function SponsorProfile() {
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">{currentSponsor.company}</h2>
             {currentSponsor.verified && (
-              <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success" title="Company email confirmed">✓ Business verified</span>
+              <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success" title="Company email confirmed">Business verified</span>
             )}
           </div>
           <p className="text-sm text-muted">{currentSponsor.industry}</p>
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
-            <span>🌐 {currentSponsor.domain}</span>
-            <span>✉ {currentSponsor.email}</span>
-            <span>Monthly budget: <span className="font-medium text-foreground">{usd(currentSponsor.budget)}</span></span>
+          <div className="mt-3 grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
+            <p className="flex justify-between gap-4"><span className="text-muted">Website</span><span className="font-medium">{currentSponsor.domain}</span></p>
+            <p className="flex justify-between gap-4"><span className="text-muted">Email</span><span className="font-medium">{currentSponsor.email}</span></p>
+            <p className="flex justify-between gap-4"><span className="text-muted">Monthly budget</span><span className="font-medium">{usd(currentSponsor.budget)}</span></p>
           </div>
         </div>
       </div>
