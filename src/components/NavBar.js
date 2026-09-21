@@ -11,6 +11,7 @@ const LINKS_BY_ROLE = {
   sponsor: [
     { href: "/creators", label: "Find Creators" },
     { href: "/match", label: "AI Match" },
+    { href: "/campaigns", label: "Campaigns" },
     { href: "/dashboard", label: "Dashboard" },
   ],
   creator: [
@@ -30,6 +31,7 @@ export default function NavBar() {
   const [open, setOpen] = useState(false);
   const role = user?.role || "guest";
   const links = LINKS_BY_ROLE[role];
+  const profileHref = role === "creator" ? "/creator/profile" : "/sponsor/profile";
 
   const isActive = (href) => pathname === href || pathname.startsWith(href + "/");
   function signOut() {
@@ -65,11 +67,11 @@ export default function NavBar() {
         <div className="hidden items-center gap-3 sm:flex">
           {user ? (
             <>
-              <span className="hidden items-center gap-2 text-sm md:flex">
+              <Link href={profileHref} className="hidden items-center gap-2 text-sm hover:opacity-80 md:flex">
                 <Avatar name={user.name} size={26} />
                 <span className="font-medium">{user.name}</span>
                 {user.verified && <span className="text-success">✓</span>}
-              </span>
+              </Link>
               <button onClick={signOut} className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted hover:bg-background">Log out</button>
             </>
           ) : (
@@ -89,11 +91,11 @@ export default function NavBar() {
         <div className="border-t border-border bg-surface sm:hidden">
           <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3">
             {user && (
-              <div className="mb-1 flex items-center gap-2 px-1 pb-2 text-sm">
+              <Link href={profileHref} onClick={() => setOpen(false)} className="mb-1 flex items-center gap-2 px-1 pb-2 text-sm hover:opacity-80">
                 <Avatar name={user.name} size={28} />
                 <span className="font-medium">{user.name}</span>
                 {user.verified && <span className="text-success">✓</span>}
-              </div>
+              </Link>
             )}
             {links.map((l) => (
               <Link key={l.href} href={l.href} onClick={() => setOpen(false)}

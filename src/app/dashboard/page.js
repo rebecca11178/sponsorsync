@@ -21,11 +21,11 @@ export default function Dashboard() {
         <section>
           <h2 className="font-semibold">Active deals</h2>
           <div className="mt-3 space-y-3">
-            {deals.map((d) => {
+            {deals.filter((d) => d.sponsor === currentSponsor.company).map((d) => {
               const c = getCreator(d.creatorId);
               return (
                 <Link key={d.id} href={`/deals/${d.id}`} className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 hover:shadow-md">
-                  <Avatar name={c.name} size={48} />
+                  <Avatar name={c?.name || "?"} size={48} />
                   <div className="flex-1">
                     <p className="font-medium">{c.name}</p>
                     <p className="text-xs text-muted">{d.package} · {usd(d.amount)}</p>

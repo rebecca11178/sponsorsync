@@ -96,6 +96,60 @@ export const deals = [
       { from: "creator", text: "Thanks! I like the fit. What are the must-hit talking points?", time: "14:33" },
     ],
   },
+  {
+    id: "d4",
+    creatorId: "c5",
+    sponsor: "BrightLeaf Tea Co.",
+    sponsorEmoji: "🍃",
+    status: "completed",
+    package: "Integrated video",
+    amount: 340,
+    terms: [
+      { label: "Deliverable", value: "60s integration of our loose-leaf sampler" },
+      { label: "Base price", value: "$340" },
+      { label: "Disclosure", value: "YouTube paid-promotion toggle + verbal mention" },
+    ],
+    messages: [
+      { from: "sponsor", text: "Loved the last collab — same format for our new sampler?", time: "11:00" },
+      { from: "creator", text: "Published and live! Numbers looking strong.", time: "11:05" },
+    ],
+  },
+  {
+    id: "d5",
+    creatorId: "c2",
+    sponsor: "BrightLeaf Tea Co.",
+    sponsorEmoji: "🍃",
+    status: "in_production",
+    package: "Dedicated video",
+    amount: 4200,
+    terms: [
+      { label: "Deliverable", value: "Dedicated brewing-technique video featuring our matcha" },
+      { label: "Base price", value: "$4,200" },
+      { label: "Restrictions", value: "No health claims" },
+    ],
+    messages: [
+      { from: "sponsor", text: "Signed! Excited to see the brewing feature.", time: "16:20" },
+      { from: "creator", text: "Filming this weekend, draft to you next week.", time: "16:31" },
+    ],
+  },
+  {
+    id: "d6",
+    creatorId: "c8",
+    sponsor: "BrightLeaf Tea Co.",
+    sponsorEmoji: "🍃",
+    status: "contracted",
+    package: "Integrated video + whitelisting",
+    amount: 1300,
+    terms: [
+      { label: "Deliverable", value: "Integration in an upcoming morning-routine video" },
+      { label: "Base price", value: "$900 + $400 ad whitelisting" },
+      { label: "Disclosure", value: "Paid-promotion label required" },
+    ],
+    messages: [
+      { from: "sponsor", text: "Contract signed — looking forward to it!", time: "10:40" },
+      { from: "creator", text: "Received, thank you. Shot list coming shortly.", time: "10:52" },
+    ],
+  },
 ];
 
 export function getDeal(id) {
