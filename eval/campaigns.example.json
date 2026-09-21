@@ -1,0 +1,26 @@
+{
+  "_readme": "Copy to eval/campaigns.json. For each campaign, list 6-10 REAL channel handles and label each high / medium / low BEFORE running the script (label blind, don't look at Gemini's output first). Use 2 people to label if you can.",
+  "campaigns": [
+    {
+      "id": "green-tea",
+      "brief": {
+        "industry": "Food & Beverage",
+        "product": "cold brew green tea, no added sugar",
+        "goal": "purchase",
+        "kpi": "Sales / conversions",
+        "ageRange": "25–34",
+        "locations": "United States",
+        "language": "English",
+        "interests": "wellness, matcha, healthy breakfast",
+        "positioning": "clean energy, authentic, first-person",
+        "avoid": "health or medical claims",
+        "tier": "Any"
+      },
+      "labels": {
+        "@replace_with_real_handle_1": "high",
+        "@replace_with_real_handle_2": "medium",
+        "@replace_with_real_handle_3": "low"
+      }
+    }
+  ]
+}
