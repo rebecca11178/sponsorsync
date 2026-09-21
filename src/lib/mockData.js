@@ -150,6 +150,28 @@ export const deals = [
       { from: "creator", text: "Received, thank you. Shot list coming shortly.", time: "10:52" },
     ],
   },
+  {
+    id: "d7",
+    creatorId: "c3",
+    sponsor: "BrightLeaf Tea Co.",
+    sponsorEmoji: "🍃",
+    status: "draft",
+    package: "Integrated video",
+    amount: 0,
+    draftNote: "Budget & no-go list not set yet",
+    messages: [],
+  },
+  {
+    id: "d8",
+    creatorId: "c11",
+    sponsor: "BrightLeaf Tea Co.",
+    sponsorEmoji: "🍃",
+    status: "draft",
+    package: "Not chosen",
+    amount: 0,
+    draftNote: "Waiting on Q2 budget approval",
+    messages: [],
+  },
 ];
 
 export function getDeal(id) {
@@ -158,6 +180,7 @@ export function getDeal(id) {
 
 // Ordered lifecycle stages for a deal — powers the status timeline.
 export const dealStages = [
+  { key: "draft", label: "Draft" },
   { key: "enquiry", label: "Enquiry" },
   { key: "chatroom", label: "Chat" },
   { key: "contracted", label: "Contract" },

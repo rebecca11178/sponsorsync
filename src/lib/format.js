@@ -42,6 +42,7 @@ export function cheapestPackage(rates) {
 }
 
 export const statusLabels = {
+  draft: "Draft",
   enquiry: "Enquiry sent",
   chatroom: "In chat",
   contracted: "Contracted",
