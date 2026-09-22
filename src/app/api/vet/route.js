@@ -14,20 +14,36 @@ import { VET_SCHEMA, VET_SYSTEM, vetPrompt, riskOf } from "@/lib/ai/vet";
 // path only when the creator has a real channel handle and both APIs are on;
 // otherwise returns a clearly-labelled sample so the UI always has something.
 
-// Labelled sample used when we can't run the real check.
+// Labelled sample used when we can't run the real check. Built from the
+// creator's stored `riskHistory` (see lib/ai/riskProfile.js), so every creator
+// returns a DIFFERENT, realistic commercial track record instead of one
+// generic verdict.
 function sample(creator) {
+  const h = creator?.riskHistory;
+  if (h?.checks?.length) {
+    return {
+      risk: h.riskLevel || riskOf(h.checks),
+      isSponsored: h.isSponsored ?? true,
+      summary: h.summary,
+      checks: h.checks,
+      history: {
+        pastSponsorships: h.pastSponsorships,
+        disclosureRate: h.disclosureRate,
+        onTimeRate: h.onTimeRate,
+        disputes: h.disputes,
+        categoriesToWatch: h.categoriesToWatch,
+      },
+    };
+  }
+  // Fallback if a creator somehow has no derived history.
   const checks = [
     { status: "ok", label: "Discloses paid promotion", note: "‘Includes paid promotion’ shown and mentioned verbally in the first 30s." },
     { status: "ok", label: "No unsafe or adult content", note: "Family-safe language and visuals throughout." },
-    { status: "warn", label: "Soft benefit claim ~4:10", note: "Says a product ‘changed my routine’ without specifics — fine, but keep it away from health framing." },
-    { status: "ok", label: "No competitor knocking", note: "Compares on features, doesn’t name rivals." },
-    { status: "ok", label: "Natural integration", note: "Woven into the video, not a bolted-on ad read." },
-    { status: "warn", label: "Confirm audience age", note: "Some comments read young — verify the under-18 share before youth-sensitive products." },
   ];
   return {
     risk: riskOf(checks),
     isSponsored: true,
-    summary: `${creator?.name || "This creator"} handles brand deals cleanly, with a couple of points to confirm before signing.`,
+    summary: `${creator?.name || "This creator"} handles brand deals cleanly.`,
     checks,
   };
 }

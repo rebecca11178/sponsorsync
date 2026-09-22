@@ -454,7 +454,9 @@ function ResultCard({ c, over }) {
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2 text-sm font-semibold">
                 Brand-safety risk
-                <span className="rounded-full bg-brand-soft px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand">Gemini</span>
+                {vet.source === "gemini"
+                  ? <span className="rounded-full bg-brand-soft px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand">Gemini</span>
+                  : <span className="rounded-full bg-background px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-muted">Track record</span>}
               </span>
               <span className={`text-xs font-semibold uppercase tracking-wide ${risk.text}`}>{risk.label} risk</span>
             </div>
@@ -473,6 +475,21 @@ function ResultCard({ c, over }) {
 
             {vet.summary && <p className="mt-3 text-xs leading-snug text-muted">{vet.summary}</p>}
 
+            {vet.history && (
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {[
+                  { k: "Past deals", v: vet.history.pastSponsorships },
+                  { k: "Disclosed", v: `${vet.history.disclosureRate}%` },
+                  { k: "On-time", v: `${vet.history.onTimeRate}%` },
+                ].map((s) => (
+                  <div key={s.k} className="rounded-lg bg-background px-2 py-1.5 text-center">
+                    <div className="text-sm font-semibold text-foreground">{s.v}</div>
+                    <div className="text-[9px] uppercase tracking-wide text-muted">{s.k}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <ul className="mt-2.5 space-y-2">
               {vet.checks?.map((it, i) => (
                 <li key={i} className="flex items-start gap-2 text-xs leading-snug">
@@ -488,7 +505,7 @@ function ResultCard({ c, over }) {
             <p className="mt-3 text-[10px] text-muted">
               {vet.source === "gemini"
                 ? `Live analysis via Gemini${vet.video?.title ? ` · “${vet.video.title}”` : ""}.`
-                : "Sample result — connect a real YouTube channel for a live check."}
+                : "Based on this creator's tracked deal history (demo data). Connect a real channel for live Gemini video analysis."}
             </p>
           </div>
         )}

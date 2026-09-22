@@ -1,4 +1,5 @@
-import { creators } from "./creators.generated.js";
+import { creators as rawCreators } from "./creators.generated.js";
+import { deriveRiskHistory } from "./ai/riskProfile.js";
 // ---------------------------------------------------------------------------
 // MOCK DATA — replace with real YouTube Data API + your DB later.
 // Every field here is what the UI reads. Teammates: keep the SHAPE the same
@@ -22,7 +23,12 @@ export const currentSponsor = {
 // the script — never hand-edit creators.generated.js.
 // Set a creator's `youtubeHandle` to pull that creator's REAL recent videos in
 // /api/match; creators without one use the roster's demo videos.
-export { creators } from "./creators.generated.js";
+//
+// We attach a deterministic `riskHistory` to every creator (see
+// lib/ai/riskProfile.js): a per-creator commercial track record that powers the
+// pre-deal risk screen so the 50 creators show DIFFERENT, realistic histories
+// instead of one generic verdict. Demo data; live Gemini analysis overrides it.
+export const creators = rawCreators.map((c) => ({ ...c, riskHistory: deriveRiskHistory(c) }));
 
 export function getCreator(id) {
   return creators.find((c) => c.id === id);
