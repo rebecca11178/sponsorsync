@@ -5,13 +5,8 @@ import { APP_TAGLINE, APP_PITCH } from "@/lib/config";
 import { useAuth } from "@/components/AuthProvider";
 import WorkspaceHome from "@/components/WorkspaceHome";
 import HeroVisual from "@/components/HeroVisual";
-
-const steps = [
-  { n: "1", title: "Verify", desc: "Sign up with your company email. Creators trust you're a real business, not a scam DM." },
-  { n: "2", title: "Discover", desc: "Browse creators with transparent, listed pricing — or let Gemini match you from a brief." },
-  { n: "3", title: "Agree", desc: "Send an enquiry, chat, and let AI turn the conversation into clear collaboration terms." },
-  { n: "4", title: "Review", desc: "When the video is delivered, AI checks it against your brief, brand rules, and the contract." },
-];
+import AnimatedStats from "@/components/AnimatedStats";
+import HowItWorks from "@/components/HowItWorks";
 
 const pillars = [
   {
@@ -32,13 +27,6 @@ const pillars = [
     desc: "Gemini summarizes chats into terms, then reviews the delivered video against your brief and legal claims.",
     gap: "The manual, time-heavy step the hackathon calls out.",
   },
-];
-
-const stats = [
-  { value: "$32.6B", label: "creator-marketing market size", src: "Influencer Marketing Hub, 2025" },
-  { value: "78%", label: "say YouTube has the most trusted creators", src: "YouTube NewFronts, 2026" },
-  { value: "36.7%", label: "of brands use YouTube for influencer marketing", src: "industry survey, 2025" },
-  { value: "+30%", label: "avg. conversion lift, creator videos on Shorts", src: "YouTube, Jan 2025–Jan 2026" },
 ];
 
 const comparison = [
@@ -94,18 +82,8 @@ function Marketing() {
         <p className="mt-3 text-xs text-muted">Verify with your company email in under a minute — no card, no marketing team.</p>
       </section>
 
-      {/* Stats band */}
-      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
-          {stats.map((s, i) => (
-            <div key={s.label} className="bg-surface p-5">
-              <p className={`text-2xl font-bold ${["text-g-blue", "text-g-red", "text-g-yellow", "text-g-green"][i % 4]}`}>{s.value}</p>
-              <p className="mt-1 text-xs text-muted">{s.label}</p>
-              <p className="mt-1 text-[10px] text-muted/80">Source: {s.src}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Stats band (animated count-up) */}
+      <AnimatedStats />
 
       {/* Pillars */}
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
@@ -123,19 +101,8 @@ function Marketing() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <h2 className="text-2xl font-semibold tracking-tight">How it works</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map((s) => (
-            <div key={s.n} className="rounded-2xl border border-border bg-surface p-6">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-soft font-semibold text-brand">{s.n}</span>
-              <h3 className="mt-4 font-semibold">{s.title}</h3>
-              <p className="mt-1 text-sm text-muted">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* How it works (animated workflow) */}
+      <HowItWorks />
 
       {/* Comparison */}
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">

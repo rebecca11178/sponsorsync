@@ -38,7 +38,7 @@ export default function HeroVisual() {
             <span className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">SponsorSync</span>
           </span>
         </div>
-        <p className="mt-3 text-xs font-medium uppercase tracking-[0.2em] text-white/75 sm:text-sm">
+        <p className="mt-3 text-sm font-medium uppercase tracking-[0.22em] text-white/80 sm:text-base">
           Verified creator sponsorships
         </p>
       </div>
@@ -56,36 +56,38 @@ export default function HeroVisual() {
       </div>
 
       {/* Brand node (left) */}
-      <div className="ss-float-a absolute left-[4%] top-[60%] w-[210px] max-w-[38%]">
-        <div className="rounded-xl border border-white/25 bg-white/15 p-2.5 backdrop-blur-md">
-          <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-md bg-white text-xs font-bold text-brand">B</span>
+      <div className="ss-float-a absolute left-[4%] top-[60%] w-[240px] max-w-[42%]">
+        <div className="rounded-xl border border-white/25 bg-white/15 p-3 backdrop-blur-md">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-9 w-9 place-items-center rounded-md bg-white text-sm font-bold text-brand">B</span>
             <div className="min-w-0">
-              <p className="truncate text-xs font-semibold text-white">Your brand</p>
-              <p className="truncate text-[10px] text-white/70">Verified sponsor</p>
+              <p className="truncate text-sm font-semibold text-white">Your brand</p>
+              <p className="truncate text-xs text-white/75">Verified sponsor</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Creator node (right) */}
-      <div className="ss-float-b absolute right-[4%] top-[60%] w-[210px] max-w-[38%]">
-        <div className="rounded-xl border border-white/25 bg-white/15 p-2.5 backdrop-blur-md">
-          <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-g-red text-xs font-bold text-white">MC</span>
+      <div className="ss-float-b absolute right-[4%] top-[60%] w-[240px] max-w-[42%]">
+        <div className="rounded-xl border border-white/25 bg-white/15 p-3 backdrop-blur-md">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-9 w-9 place-items-center rounded-md bg-g-red">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="#fff" aria-hidden="true"><path d="M5 3.4v9.2l7.5-4.6z" /></svg>
+            </span>
             <div className="min-w-0">
-              <p className="truncate text-xs font-semibold text-white">Creator</p>
-              <p className="truncate text-[10px] text-white/70">Safety 96 · rate card</p>
+              <p className="truncate text-sm font-semibold text-white">YouTube Creators</p>
+              <p className="truncate text-xs text-white/75">Verified · transparent rates</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Floating trust chips */}
-      <div className="ss-float-c absolute right-[22%] top-[14%] hidden rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-semibold text-success shadow sm:block">
+      <div className="ss-float-c absolute right-[22%] top-[13%] hidden rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-success shadow sm:block">
         ✓ Verified
       </div>
-      <div className="ss-float-d absolute left-[22%] top-[16%] hidden rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-semibold text-brand shadow sm:block">
+      <div className="ss-float-d absolute left-[22%] top-[15%] hidden rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-brand shadow sm:block">
         AI match
       </div>
 
