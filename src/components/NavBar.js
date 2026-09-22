@@ -76,7 +76,10 @@ export default function NavBar() {
               <button onClick={signOut} className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted hover:bg-background">Log out</button>
             </>
           ) : (
-            <Link href="/login" className="rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark">Log in</Link>
+            <>
+              <Link href="/login" className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted hover:bg-background">Log in</Link>
+              <Link href="/sponsor/signup" className="rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark">Get verified</Link>
+            </>
           )}
         </div>
 
@@ -110,7 +113,10 @@ export default function NavBar() {
             {user ? (
               <button onClick={signOut} className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-muted hover:bg-background">Log out</button>
             ) : (
-              <Link href="/login" onClick={() => setOpen(false)} className="rounded-lg bg-brand px-3 py-2.5 text-center text-sm font-semibold text-white">Log in</Link>
+              <>
+                <Link href="/sponsor/signup" onClick={() => setOpen(false)} className="rounded-lg bg-brand px-3 py-2.5 text-center text-sm font-semibold text-white">Get verified</Link>
+                <Link href="/login" onClick={() => setOpen(false)} className="rounded-lg border border-border px-3 py-2.5 text-center text-sm font-medium text-foreground hover:bg-background">Log in</Link>
+              </>
             )}
           </nav>
         </div>

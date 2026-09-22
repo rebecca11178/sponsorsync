@@ -80,14 +80,18 @@ function Marketing() {
           Run creator sponsorships on YouTube <span className="text-brand">without a marketing team.</span>
         </h1>
         <p className="mt-5 max-w-2xl text-lg text-muted">{APP_TAGLINE}. {APP_PITCH}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/creators" className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Link href="/sponsor/signup" className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
+            Get verified — it&apos;s free
+          </Link>
+          <Link href="/creators" className="rounded-lg border border-border bg-surface px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-background">
             Browse creators
           </Link>
-          <Link href="/match" className="rounded-lg border border-border bg-surface px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-background">
-            Let AI match me
+          <Link href="/match" className="text-sm font-medium text-brand hover:underline">
+            or let AI match you →
           </Link>
         </div>
+        <p className="mt-3 text-xs text-muted">Verify with your company email in under a minute — no card, no marketing team.</p>
       </section>
 
       {/* Stats band */}
