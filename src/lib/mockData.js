@@ -180,6 +180,105 @@ export const deals = [
     draftNote: "Waiting on Q2 budget approval",
     messages: [],
   },
+
+  // --- The logged-in creator's OWN collaborations (Maya Chen, c1) with other
+  // brands. These carry non-BrightLeaf sponsors, so they populate the creator's
+  // "My collaborations" page WITHOUT appearing on the sponsor's campaigns view
+  // (which filters to sponsor === BrightLeaf). Gives the creator side a full
+  // spread of statuses symmetric to the sponsor console.
+  {
+    id: "d9",
+    creatorId: "c1",
+    sponsor: "Verdant Skincare",
+    sponsorEmoji: "🌿",
+    sponsorVerified: true,
+    status: "contracted",
+    package: "Dedicated video",
+    amount: 2500,
+    terms: [
+      { label: "Deliverable", value: "Dedicated 'clean pantry, clean skin' video" },
+      { label: "Base price", value: "$2,500" },
+      { label: "Restrictions", value: "No medical/dermatology claims" },
+      { label: "Disclosure", value: "Paid-promotion label + verbal mention" },
+    ],
+    messages: [
+      { from: "sponsor", text: "Contract signed — can't wait to see it!", time: "12:10" },
+      { from: "creator", text: "Thank you! Filming next week, draft to follow.", time: "12:22" },
+    ],
+  },
+  {
+    id: "d10",
+    creatorId: "c1",
+    sponsor: "Nomad Coffee Roasters",
+    sponsorEmoji: "☕",
+    sponsorVerified: true,
+    status: "in_production",
+    package: "Integrated video (90s)",
+    amount: 1600,
+    terms: [
+      { label: "Deliverable", value: "90s integration of the cold-brew kit in a morning video" },
+      { label: "Base price", value: "$1,600" },
+      { label: "Disclosure", value: "Paid-promotion label required" },
+    ],
+    messages: [
+      { from: "sponsor", text: "Shot list looks great. Go ahead and film!", time: "08:40" },
+      { from: "creator", text: "On it — draft to you by Friday.", time: "08:51" },
+    ],
+  },
+  {
+    id: "d11",
+    creatorId: "c1",
+    sponsor: "PantryPro Kitchenware",
+    sponsorEmoji: "🍳",
+    sponsorVerified: true,
+    status: "in_review",
+    package: "Dedicated video",
+    amount: 2200,
+    deliverable: { title: "5 pantry tools I actually use (ad)", lengthMin: 11, deliveredDaysAgo: 1, url: "" },
+    terms: [
+      { label: "Deliverable", value: "Dedicated video featuring the knife set + board" },
+      { label: "Base price", value: "$2,200" },
+      { label: "Disclosure", value: "Paid-promotion label + verbal mention" },
+    ],
+    messages: [
+      { from: "sponsor", text: "Excited for this one — send the draft when ready.", time: "15:00" },
+      { from: "creator", text: "Just delivered the final cut for your review!", time: "15:40" },
+    ],
+  },
+  {
+    id: "d12",
+    creatorId: "c1",
+    sponsor: "Bloom Greens",
+    sponsorEmoji: "🥗",
+    sponsorVerified: true,
+    status: "completed",
+    package: "Integrated video",
+    amount: 1400,
+    deliverable: { title: "What I eat in a week on a budget (ad)", lengthMin: 10, deliveredDaysAgo: 20, url: "", reviewVerdict: "pass" },
+    terms: [
+      { label: "Deliverable", value: "60s integration of the salad kit" },
+      { label: "Base price", value: "$1,400" },
+      { label: "Disclosure", value: "Paid-promotion label + verbal mention" },
+    ],
+    messages: [
+      { from: "sponsor", text: "Numbers look fantastic — thank you!", time: "10:15" },
+      { from: "creator", text: "So glad it performed. Would love to work together again.", time: "10:20" },
+    ],
+  },
+  {
+    id: "d13",
+    creatorId: "c1",
+    sponsor: "Trailmix Snacks",
+    sponsorEmoji: "🥜",
+    sponsorVerified: false,
+    status: "chatroom",
+    package: "YouTube Short",
+    amount: 600,
+    messages: [
+      { from: "sponsor", text: "Hey Maya — interested in a Short featuring our trail mix?", time: "13:05" },
+      { from: "creator", text: "Thanks! Could you share more about the brand and budget?", time: "13:19" },
+    ],
+  },
 ];
 
 // An existing deal for this creator, if any (used to route a creator's page

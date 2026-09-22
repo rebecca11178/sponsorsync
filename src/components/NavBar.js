@@ -16,6 +16,7 @@ const LINKS_BY_ROLE = {
   ],
   creator: [
     { href: "/creator", label: "Inbox" },
+    { href: "/creator/collaborations", label: "Collaborations" },
     { href: "/creator/profile", label: "My Profile" },
   ],
   guest: [

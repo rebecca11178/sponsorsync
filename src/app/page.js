@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { APP_NAME, APP_TAGLINE, APP_PITCH } from "@/lib/config";
+import HomeCTA from "@/components/HomeCTA";
 
 const steps = [
   { n: "1", title: "Verify", desc: "Sign up with your company email. Creators trust you're a real business, not a scam DM." },
@@ -60,14 +61,7 @@ export default function Home() {
           Run creator sponsorships on YouTube <span className="text-brand">without a marketing team.</span>
         </h1>
         <p className="mt-5 max-w-2xl text-lg text-muted">{APP_TAGLINE}. {APP_PITCH}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/creators" className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
-            Browse creators
-          </Link>
-          <Link href="/match" className="rounded-lg border border-border bg-surface px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-background">
-            Let AI match me
-          </Link>
-        </div>
+        <HomeCTA variant="hero" />
       </section>
 
       {/* Stats band */}
@@ -149,15 +143,7 @@ export default function Home() {
 
       {/* CTA band */}
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-        <div className="flex flex-col items-start justify-between gap-4 rounded-2xl bg-brand px-6 py-8 text-white sm:flex-row sm:items-center sm:px-10">
-          <div>
-            <h2 className="text-xl font-semibold">Ready to run your first sponsorship?</h2>
-            <p className="mt-1 text-sm text-white/80">Verify your business in under a minute.</p>
-          </div>
-          <Link href="/sponsor/signup" className="rounded-lg bg-white px-5 py-3 text-sm font-semibold text-brand transition-colors hover:bg-white/90">
-            Get verified
-          </Link>
-        </div>
+        <HomeCTA variant="band" />
       </section>
     </div>
   );
