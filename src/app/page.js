@@ -68,27 +68,25 @@ export default function Home() {
 function Marketing() {
   return (
     <div>
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-4 pt-12 pb-12 sm:px-6 sm:pt-16">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted">
-              For small & mid-size businesses · YouTube creator sponsorships
-            </span>
-            <h1 className="mt-5 max-w-xl text-4xl font-semibold tracking-tight sm:text-5xl">
-              Run creator sponsorships on YouTube <span className="text-brand">without a marketing team.</span>
-            </h1>
-            <p className="mt-5 max-w-xl text-lg text-muted">{APP_TAGLINE}. {APP_PITCH}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/creators" className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
-                Browse creators
-              </Link>
-              <Link href="/match" className="rounded-lg border border-border bg-surface px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-background">
-                Let AI match me
-              </Link>
-            </div>
-          </div>
-          <HeroVisual />
+      {/* Full-width campaign key visual */}
+      <HeroVisual />
+
+      {/* Hero copy */}
+      <section className="mx-auto max-w-6xl px-4 pt-10 pb-12 sm:px-6 sm:pt-12">
+        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted">
+          For small & mid-size businesses · YouTube creator sponsorships
+        </span>
+        <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
+          Run creator sponsorships on YouTube <span className="text-brand">without a marketing team.</span>
+        </h1>
+        <p className="mt-5 max-w-2xl text-lg text-muted">{APP_TAGLINE}. {APP_PITCH}</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/creators" className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
+            Browse creators
+          </Link>
+          <Link href="/match" className="rounded-lg border border-border bg-surface px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-background">
+            Let AI match me
+          </Link>
         </div>
       </section>
 
