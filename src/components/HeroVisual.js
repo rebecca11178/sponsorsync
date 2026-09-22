@@ -84,8 +84,9 @@ export default function HeroVisual() {
       </div>
 
       {/* Floating trust chips */}
-      <div className="ss-float-c absolute right-[22%] top-[13%] hidden rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-success shadow sm:block">
-        ✓ Verified
+      <div className="ss-float-c absolute right-[22%] top-[13%] hidden items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-success shadow sm:flex">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12.5l5 5 11-12" /></svg>
+        Verified
       </div>
       <div className="ss-float-d absolute left-[22%] top-[15%] hidden rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-brand shadow sm:block">
         AI match

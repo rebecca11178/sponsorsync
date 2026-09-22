@@ -122,7 +122,7 @@ export function combineScore(ai, creator, brief) {
   let fit = WEIGHTS.content * ai.contentFit + WEIGHTS.audience * ai.audienceFit + WEIGHTS.engagement * breakdown.engagement;
 
   // The UI shows the first 3 reasons, so warnings go right after the headline reason.
-  const warnings = (ai.riskFlags || []).map((r) => `⚠ ${r}`);
+  const warnings = (ai.riskFlags || []).map((r) => `${r}`);
   if (brief.tier && brief.tier !== "Any" && brief.tier !== creator.tier) {
     fit -= TIER_MISMATCH_PENALTY;
     warnings.push(`Is ${creator.tier}, but you asked for ${brief.tier}`);

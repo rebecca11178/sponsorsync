@@ -8,6 +8,7 @@ import HeroVisual from "@/components/HeroVisual";
 import AnimatedStats from "@/components/AnimatedStats";
 import HowItWorks from "@/components/HowItWorks";
 import Reveal from "@/components/Reveal";
+import { CheckIcon } from "@/components/icons";
 
 const pillars = [
   {
@@ -39,7 +40,9 @@ const comparison = [
 ];
 
 function Cell({ on }) {
-  return on ? <span className="text-success">✓</span> : <span className="text-muted/40">—</span>;
+  return on
+    ? <CheckIcon className="mx-auto text-success" size={16} />
+    : <span className="text-muted/40">—</span>;
 }
 
 export default function Home() {
@@ -134,7 +137,7 @@ function Marketing() {
           </table>
         </div>
         <p className="mt-3 text-xs text-muted">
-          Comparison of YouTube Creator Partnerships vs TikTok Creator Marketplace, as of 2026. ✓ = capability offered to small advertisers today.
+          Comparison of YouTube Creator Partnerships vs TikTok Creator Marketplace, as of 2026. A check mark = capability offered to small advertisers today.
           The SponsorSync column reflects features demonstrated in this prototype.
         </p>
       </section>

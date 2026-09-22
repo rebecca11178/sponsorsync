@@ -10,7 +10,6 @@ import Avatar from "@/components/Avatar";
 const MOCK_CHANNEL = {
   name: "Maya Chen",
   handle: "@mayaeats",
-  emoji: "🍵",
   subscribers: 84000,
   avgViews: 41000,
   niche: "Food & Beverage",
@@ -55,7 +54,7 @@ export default function CreatorSignup() {
             <Avatar name={MOCK_CHANNEL.name} size={44} />
             <div>
               <p className="text-sm font-medium">{MOCK_CHANNEL.name} · {MOCK_CHANNEL.handle}</p>
-              <p className="text-xs text-muted">{compact(MOCK_CHANNEL.subscribers)} subs · {compact(MOCK_CHANNEL.avgViews)} avg views · verified ✓</p>
+              <p className="text-xs text-muted">{compact(MOCK_CHANNEL.subscribers)} subs · {compact(MOCK_CHANNEL.avgViews)} avg views · verified</p>
             </div>
           </div>
 

@@ -1,4 +1,5 @@
 import { dealStages } from "@/lib/mockData";
+import { CheckIcon } from "@/components/icons";
 
 // Horizontal progress timeline for a deal. `current` is a stage key.
 export default function StatusTimeline({ current }) {
@@ -21,7 +22,7 @@ export default function StatusTimeline({ current }) {
                     : "bg-background text-muted border border-border"
                 }`}
               >
-                {done ? "✓" : i + 1}
+                {done ? <CheckIcon size={13} /> : i + 1}
               </span>
               <span className={`mt-1 text-[11px] ${active ? "font-semibold text-foreground" : "text-muted"}`}>
                 {s.label}

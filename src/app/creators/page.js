@@ -88,7 +88,7 @@ export default function CreatorsPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{c.name}</h3>
-                    {c.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">✓ Channel verified</span>}
+                    {c.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">Channel verified</span>}
                   </div>
                   <p className="text-sm text-muted">{c.handle} · {c.niche}</p>
                   <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">

@@ -12,7 +12,7 @@ export default function Dashboard() {
           <p className="mt-1 text-sm text-muted">{currentSponsor.company} · {currentSponsor.industry}</p>
         </div>
         {currentSponsor.verified && (
-          <span className="rounded-full bg-success-soft px-3 py-1.5 text-sm font-medium text-success">✓ Verified Sponsor</span>
+          <span className="rounded-full bg-success-soft px-3 py-1.5 text-sm font-medium text-success">Verified Sponsor</span>
         )}
       </div>
 

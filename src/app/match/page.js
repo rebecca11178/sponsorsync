@@ -8,14 +8,18 @@ import Avatar from "@/components/Avatar";
 import GeminiProgress from "@/components/GeminiProgress";
 import { useAuth } from "@/components/AuthProvider";
 import GuestPromo from "@/components/GuestPromo";
+import { CheckIcon } from "@/components/icons";
 
 const STEPS = ["Business", "Goal", "Audience", "Budget", "Brand", "Results"];
 
+const goalIcon = (d) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
+);
 const GOALS = [
-  { key: "purchase", label: "Purchase / sales", desc: "Someone buys your product, subscription, or service", icon: "🛒" },
-  { key: "leads", label: "Leads", desc: "A potential customer signs up or fills out a form", icon: "📝" },
-  { key: "traffic", label: "Website traffic", desc: "Drive visits to a page on your site", icon: "🔗" },
-  { key: "awareness", label: "Brand awareness", desc: "Reach a broad audience and get video views", icon: "📣" },
+  { key: "purchase", label: "Purchase / sales", desc: "Someone buys your product, subscription, or service", icon: goalIcon(<><circle cx="9" cy="20" r="1.4" /><circle cx="18" cy="20" r="1.4" /><path d="M2 3h3l2.4 12.5a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L21 7H6" /></>) },
+  { key: "leads", label: "Leads", desc: "A potential customer signs up or fills out a form", icon: goalIcon(<><path d="M5 4h10l4 4v12H5z" /><path d="M14 4v4h4M8 13h7M8 16.5h5" /></>) },
+  { key: "traffic", label: "Website traffic", desc: "Drive visits to a page on your site", icon: goalIcon(<><path d="M10 13a4 4 0 0 0 5.7.3l3-3a4 4 0 0 0-5.7-5.7L11 6" /><path d="M14 11a4 4 0 0 0-5.7-.3l-3 3a4 4 0 0 0 5.7 5.7L13 18" /></>) },
+  { key: "awareness", label: "Brand awareness", desc: "Reach a broad audience and get video views", icon: goalIcon(<><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /></>) },
 ];
 
 const inputCls =
@@ -115,7 +119,7 @@ export default function MatchPage() {
               <span className={`grid h-7 w-7 place-items-center rounded-full text-xs font-semibold ${
                 i < step ? "bg-brand text-white" : i === step ? "bg-brand text-white ring-4 ring-brand-soft" : "bg-background text-muted border border-border"
               }`}>
-                {i < step ? "✓" : i + 1}
+                {i < step ? <CheckIcon size={13} /> : i + 1}
               </span>
               <span className={`mt-1 hidden text-[10px] sm:block ${i === step ? "font-semibold text-foreground" : "text-muted"}`}>{label}</span>
             </div>
@@ -154,7 +158,7 @@ export default function MatchPage() {
             {GOALS.map((g) => (
               <button key={g.key} onClick={() => setForm((f) => ({ ...f, goal: g.key }))}
                 className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left ${form.goal === g.key ? "border-brand bg-brand-soft" : "border-border hover:bg-background"}`}>
-                <span className="text-xl">{g.icon}</span>
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-soft text-brand">{g.icon}</span>
                 <span className="flex-1">
                   <span className="block font-medium">{g.label}</span>
                   <span className="block text-xs text-muted">{g.desc}</span>

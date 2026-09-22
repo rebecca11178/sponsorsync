@@ -48,9 +48,9 @@ export default function CreatorInbox() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold">{e.sponsor}</h3>
                   {e.verified ? (
-                    <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">✓ Verified business</span>
+                    <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success">Verified business</span>
                   ) : (
-                    <span className="rounded bg-danger-soft px-1.5 py-0.5 text-[10px] font-semibold text-danger">⚠ Unverified</span>
+                    <span className="rounded bg-danger-soft px-1.5 py-0.5 text-[10px] font-semibold text-danger">Unverified</span>
                   )}
                 </div>
                 <p className="text-xs text-muted">{e.industry} · {e.package}</p>
@@ -89,7 +89,7 @@ export default function CreatorInbox() {
               )}
               {e.status === "accepted" && (
                 <>
-                  <span className="flex items-center rounded-lg bg-success-soft px-3 py-2 text-sm font-medium text-success">✓ Accepted</span>
+                  <span className="flex items-center rounded-lg bg-success-soft px-3 py-2 text-sm font-medium text-success">Accepted</span>
                   {e.dealId && (
                     <Link href={`/deals/${e.dealId}`} className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
                       Open chatroom →

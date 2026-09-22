@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getDeal, getCreator } from "@/lib/mockData";
 import GeminiProgress from "@/components/GeminiProgress";
 import BackLink from "@/components/BackLink";
+import { CheckIcon, XIcon, WarnIcon } from "@/components/icons";
 
 export default function OrderReview() {
   const { id } = useParams();
@@ -122,10 +123,10 @@ function ReviewCard({ title, subtitle, verdict, items }) {
       <ul className="mt-4 space-y-2.5">
         {items.map((it, i) => (
           <li key={i} className="flex gap-2.5 text-sm">
-            <span className={
+            <span className={`mt-0.5 ${
               it.status === "ok" ? "text-success" : it.status === "warn" ? "text-warning" : "text-danger"
-            }>
-              {it.status === "ok" ? "✓" : it.status === "warn" ? "!" : "✕"}
+            }`}>
+              {it.status === "ok" ? <CheckIcon size={14} /> : it.status === "warn" ? <WarnIcon size={14} /> : <XIcon size={14} />}
             </span>
             <div>
               <p className="font-medium">{it.label}</p>

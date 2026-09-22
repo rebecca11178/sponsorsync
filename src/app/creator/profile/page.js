@@ -58,7 +58,7 @@ export default function CreatorProfile() {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">{me.name}</h2>
-            {me.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success" title="YouTube channel ownership confirmed">✓ Channel verified</span>}
+            {me.verified && <span className="rounded bg-success-soft px-1.5 py-0.5 text-[10px] font-semibold text-success" title="YouTube channel ownership confirmed">Channel verified</span>}
           </div>
           <p className="text-sm text-muted">{me.handle} · {me.niche} · {me.location}</p>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
@@ -75,7 +75,7 @@ export default function CreatorProfile() {
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Rate card</h2>
           <div className="flex items-center gap-3">
-            {saved && <span className="text-sm font-medium text-success">✓ Saved</span>}
+            {saved && <span className="text-sm font-medium text-success">Saved</span>}
             {editing ? (
               <button onClick={save} className="rounded-lg bg-brand px-4 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark">Save prices</button>
             ) : (

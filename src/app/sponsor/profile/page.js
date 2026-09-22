@@ -2,6 +2,7 @@ import Link from "next/link";
 import { currentSponsor, deals, getCreator } from "@/lib/mockData";
 import { usd } from "@/lib/format";
 import Avatar from "@/components/Avatar";
+import { CheckIcon } from "@/components/icons";
 
 export default function SponsorProfile() {
   const mine = deals.filter((d) => d.sponsor === currentSponsor.company);
@@ -57,7 +58,7 @@ export default function SponsorProfile() {
         <div className="rounded-2xl border border-border bg-surface p-6">
           <h2 className="font-semibold">Verification</h2>
           <p className="mt-2 flex items-center gap-2 text-sm">
-            <span className="text-success">✓</span>
+            <CheckIcon className="shrink-0 text-success" size={15} />
             <span><span className="font-medium">Business verified</span> — company email <span className="text-muted">{currentSponsor.email}</span> confirmed.</span>
           </p>
           <p className="mt-3 text-xs text-muted">

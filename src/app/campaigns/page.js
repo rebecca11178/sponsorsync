@@ -6,6 +6,7 @@ import { currentSponsor, deals, getCreator } from "@/lib/mockData";
 import { usd } from "@/lib/format";
 import Avatar from "@/components/Avatar";
 import StatusTimeline from "@/components/StatusTimeline";
+import { XIcon } from "@/components/icons";
 
 // One colour per lifecycle stage — the row's status chip.
 const STATUS = {
@@ -164,7 +165,7 @@ function DetailDrawer({ deal, onClose }) {
               <div className="mt-1"><Chip status={deal.status} /></div>
             </div>
           </div>
-          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-lg text-muted hover:bg-background">✕</button>
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-lg text-muted hover:bg-background"><XIcon size={16} /></button>
         </div>
 
         <div className="space-y-6 p-5">

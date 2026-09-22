@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { APP_NAME } from "@/lib/config";
 import { useAuth } from "@/components/AuthProvider";
 import Avatar from "@/components/Avatar";
+import { CheckIcon, XIcon, MenuIcon } from "@/components/icons";
 
 const LINKS_BY_ROLE = {
   sponsor: [
@@ -71,7 +72,7 @@ export default function NavBar() {
               <Link href={profileHref} className="hidden items-center gap-2 text-sm hover:opacity-80 md:flex">
                 <Avatar name={user.name} size={26} />
                 <span className="font-medium">{user.name}</span>
-                {user.verified && <span className="text-success">✓</span>}
+                {user.verified && <CheckIcon className="text-success" size={14} />}
               </Link>
               <button onClick={signOut} className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted hover:bg-background">Log out</button>
             </>
@@ -86,7 +87,7 @@ export default function NavBar() {
         {/* Mobile hamburger */}
         <button onClick={() => setOpen((v) => !v)} aria-label="Menu" aria-expanded={open}
           className="grid h-9 w-9 place-items-center rounded-lg border border-border text-foreground sm:hidden">
-          <span className="text-lg leading-none">{open ? "✕" : "☰"}</span>
+          {open ? <XIcon size={18} /> : <MenuIcon size={18} />}
         </button>
       </div>
 
@@ -98,7 +99,7 @@ export default function NavBar() {
               <Link href={profileHref} onClick={() => setOpen(false)} className="mb-1 flex items-center gap-2 px-1 pb-2 text-sm hover:opacity-80">
                 <Avatar name={user.name} size={28} />
                 <span className="font-medium">{user.name}</span>
-                {user.verified && <span className="text-success">✓</span>}
+                {user.verified && <CheckIcon className="text-success" size={14} />}
               </Link>
             )}
             {links.map((l) => (

@@ -6,6 +6,7 @@ import { deals, getCreator, creatorProfileId } from "@/lib/mockData";
 import { compact, usd } from "@/lib/format";
 import Avatar from "@/components/Avatar";
 import StatusTimeline from "@/components/StatusTimeline";
+import { XIcon } from "@/components/icons";
 
 // Creator-side mirror of the sponsor Campaigns console. Shows every deal where
 // this creator is the counterparty, across the same lifecycle statuses.
@@ -163,7 +164,7 @@ function DetailDrawer({ deal, onClose }) {
               <div className="mt-1"><Chip status={deal.status} /></div>
             </div>
           </div>
-          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-lg text-muted hover:bg-background">✕</button>
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-lg text-muted hover:bg-background"><XIcon size={16} /></button>
         </div>
 
         <div className="space-y-6 p-5">

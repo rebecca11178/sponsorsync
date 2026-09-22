@@ -14,7 +14,6 @@ export const ACCOUNTS = [
     name: "BrightLeaf Tea Co.",
     email: "admin@brightleaftea.co",
     password: "admin",
-    emoji: "🍃",
     verified: true,
   },
   {
@@ -24,7 +23,6 @@ export const ACCOUNTS = [
     name: "Maya Chen",
     email: "hello@mayaeats.tv",
     password: "admin",
-    emoji: "🍵",
     verified: true,
     creatorId: "c1", // links to the creator profile in mockData
   },

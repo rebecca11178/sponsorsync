@@ -63,7 +63,7 @@ export default function ContractPage() {
           )}
           {contract.flags?.length > 0 && (
             <ul className="mt-3 space-y-1 rounded-lg bg-warning-soft px-3 py-2 text-xs text-warning">
-              {contract.flags.map((f) => <li key={f}>⚠ {f}</li>)}
+              {contract.flags.map((f) => <li key={f}>• {f}</li>)}
             </ul>
           )}
           <article className="mt-6 rounded-2xl border border-border bg-surface p-8 shadow-sm">
@@ -93,7 +93,7 @@ export default function ContractPage() {
 
           {signed ? (
             <div className="mt-4 rounded-2xl border border-border bg-success-soft/50 p-4 text-sm">
-              <p className="font-medium text-success">✓ Signed on your side — sent to {creator.name}.</p>
+              <p className="font-medium text-success">Signed on your side — sent to {creator.name}.</p>
               <Link href={`/deals/${deal.id}/review`} className="mt-2 inline-block font-medium text-brand hover:underline">
                 Skip ahead to order review →
               </Link>

@@ -62,7 +62,7 @@ export default function SponsorSignup() {
 
       {state === "sent" && (
         <div className="mt-6 rounded-2xl border border-border bg-success-soft/50 p-5">
-          <p className="text-sm font-medium text-success">✓ Verification link sent to {email}</p>
+          <p className="text-sm font-medium text-success">Verification link sent to {email}</p>
           <p className="mt-1 text-sm text-muted">
             (Prototype) In the real product you&apos;d click the emailed link. For the demo, continue as verified:
           </p>
