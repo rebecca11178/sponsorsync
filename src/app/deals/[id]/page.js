@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getDeal, getCreator } from "@/lib/mockData";
 import { usd } from "@/lib/format";
@@ -9,12 +9,21 @@ import StatusTimeline from "@/components/StatusTimeline";
 import { useAuth } from "@/components/AuthProvider";
 import Avatar from "@/components/Avatar";
 import GeminiProgress from "@/components/GeminiProgress";
+import BackLink from "@/components/BackLink";
 
 export default function DealChatroom() {
   const { id } = useParams();
+  const search = useSearchParams();
   const { user } = useAuth();
   const role = user?.role || "sponsor"; // viewer perspective
   const deal = getDeal(id);
+  // A freshly-created chatroom carries the package/price the sponsor just built.
+  if (deal?.synthetic) {
+    const pkg = search.get("pkg");
+    const amount = search.get("amount");
+    if (pkg) deal.package = pkg;
+    if (amount && !Number.isNaN(Number(amount))) deal.amount = Number(amount);
+  }
   const creator = deal ? getCreator(deal.creatorId) : null;
 
   // Who the viewer is talking TO (the counterparty).
@@ -57,7 +66,7 @@ export default function DealChatroom() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <Link href={backHref} className="text-sm text-muted hover:text-foreground">{backLabel}</Link>
+      <BackLink href={backHref} className="text-sm text-muted hover:text-foreground">{backLabel}</BackLink>
 
       <div className="mt-4 rounded-2xl border border-border bg-surface p-5">
         <StatusTimeline current={deal.status} />

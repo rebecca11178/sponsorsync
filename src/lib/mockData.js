@@ -182,7 +182,39 @@ export const deals = [
   },
 ];
 
+// An existing deal for this creator, if any (used to route a creator's page
+// straight into their real chatroom instead of a hardcoded one).
+export function getDealForCreator(creatorId) {
+  return deals.find((d) => d.creatorId === creatorId) || null;
+}
+
+// Every creator can be contacted, but only a few have a pre-seeded deal. For
+// the rest we synthesize a fresh chatroom on the fly so "Open chatroom" always
+// lands on the RIGHT creator. Id shape: `new-<creatorId>`.
+export function newChatroomDeal(creatorId, { pkg, amount } = {}) {
+  const creator = getCreator(creatorId);
+  if (!creator) return null;
+  const firstName = (creator.name || "there").split(" ")[0];
+  const brand = (currentSponsor.company || "our brand").replace(/\.$/, ""); // avoid "Co.."
+  return {
+    id: `new-${creatorId}`,
+    creatorId,
+    creator: creator.name,
+    sponsor: currentSponsor.company,
+    package: pkg || "Integrated video",
+    amount: amount || creator.rates?.integratedVideo || 1200,
+    status: "chatroom",
+    synthetic: true,
+    messages: [
+      { from: "sponsor", text: `Hi ${firstName} — this is the team at ${brand}. We loved your recent videos and would like to discuss a sponsored ${(pkg || "integrated video").toLowerCase()}. Are you open to it?`, time: "now" },
+    ],
+  };
+}
+
 export function getDeal(id) {
+  if (typeof id === "string" && id.startsWith("new-")) {
+    return newChatroomDeal(id.slice(4));
+  }
   return deals.find((d) => d.id === id);
 }
 

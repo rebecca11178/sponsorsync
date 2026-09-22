@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getDeal, getCreator } from "@/lib/mockData";
 import GeminiProgress from "@/components/GeminiProgress";
+import BackLink from "@/components/BackLink";
 
 export default function ContractPage() {
   const { id } = useParams();
@@ -38,7 +39,7 @@ export default function ContractPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <Link href={`/deals/${deal.id}`} className="text-sm text-muted hover:text-foreground">← Back to chatroom</Link>
+      <BackLink href={`/deals/${deal.id}`} className="text-sm text-muted hover:text-foreground">← Back to chatroom</BackLink>
       <h1 className="mt-4 text-2xl font-semibold tracking-tight">Contract</h1>
       <p className="mt-1 text-sm text-muted">
         Generated from your agreed terms with {creator.name}.

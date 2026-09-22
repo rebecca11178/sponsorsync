@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getCreator } from "@/lib/mockData";
+import { getCreator, getDealForCreator } from "@/lib/mockData";
 import { compact, usd, scoreTone } from "@/lib/format";
 import { loadAllOverrides, mergePricing } from "@/lib/pricing";
 import Avatar from "@/components/Avatar";
@@ -38,6 +38,14 @@ export default function CreatorDetail() {
   const rightsTotal = rights.reduce((sum, r) => (selected[r.key] ? sum + pricing.commercialRights[r.key] : sum), 0);
   const total = pricing.rates[pkg] + rightsTotal;
   const safety = scoreTone(c.brandSafety);
+
+  // Route into THIS creator's chatroom — their existing deal, or a fresh one
+  // seeded with the package they just built.
+  const existingDeal = getDealForCreator(c.id);
+  const pkgLabel = packages.find((p) => p.key === pkg)?.label || "Integrated video";
+  const chatHref = existingDeal
+    ? `/deals/${existingDeal.id}`
+    : `/deals/new-${c.id}?pkg=${encodeURIComponent(pkgLabel)}&amount=${total}`;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -141,7 +149,7 @@ export default function CreatorDetail() {
           {sent ? (
             <div className="rounded-lg bg-success-soft/60 p-3 text-sm">
               <p className="font-medium text-success">✓ Enquiry sent</p>
-              <Link href="/deals/d1" className="mt-2 inline-block font-medium text-brand hover:underline">
+              <Link href={chatHref} className="mt-2 inline-block font-medium text-brand hover:underline">
                 Open chatroom →
               </Link>
             </div>
