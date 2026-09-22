@@ -12,7 +12,7 @@ const CONTENT = {
     subtitle:
       "SponsorSync is the only place where small businesses can see a creator's rate card by content type — integrated videos, dedicated videos, and Shorts — along with commercial-rights add-ons, before sending a single message.",
     bullets: [
-      { title: "Transparent rate cards", desc: "No back-and-forth DMs just to learn a price — the number YouTube and TikTok never show you." },
+      { title: "Transparent rate cards", desc: "No back-and-forth DMs just to learn a price — every rate is listed upfront." },
       { title: "Verified, brand-safe creators", desc: "Every creator is channel-verified, with a brand-safety score and a real track record." },
       { title: "Filter to your budget", desc: "Narrow by tier and maximum rate, so you only see creators you can actually afford." },
     ],

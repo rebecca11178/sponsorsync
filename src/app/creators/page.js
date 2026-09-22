@@ -36,7 +36,7 @@ export default function CreatorsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Find creators</h1>
           <p className="mt-1 text-sm text-muted">
-            Transparent pricing by content type — the rate card YouTube and TikTok never show you.
+            Transparent pricing by content type — every creator&apos;s rate card, upfront.
           </p>
         </div>
         <Link href="/match" className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium hover:bg-background">

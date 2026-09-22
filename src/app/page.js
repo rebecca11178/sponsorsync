@@ -8,42 +8,47 @@ import HeroVisual from "@/components/HeroVisual";
 import AnimatedStats from "@/components/AnimatedStats";
 import HowItWorks from "@/components/HowItWorks";
 import Reveal from "@/components/Reveal";
-import { CheckIcon } from "@/components/icons";
 
 const pillars = [
   {
     tag: "Trust",
     title: "Verified sponsors",
     desc: "Company-email verification on both sides, so there's no guessing whether a brand — or a creator — is legitimate.",
-    gap: "Google's Creator Partnerships doesn't offer this.",
+    gap: "A verified-business trust layer built for small advertisers.",
   },
   {
     tag: "Transparency",
     title: "Clear rate cards",
     desc: "Every creator lists prices by content type, plus commercial-rights add-ons — so you know what's fair before you ask.",
-    gap: "Neither YouTube nor TikTok publishes creator pricing.",
+    gap: "Upfront rates, so first-time sponsors can plan with confidence.",
   },
   {
     tag: "AI review",
     title: "Contract & content check",
     desc: "Gemini turns the chat into clear terms, then reviews the delivered video against your brief, brand rules, and disclosure requirements.",
-    gap: "The manual, time-consuming step most tools leave to you.",
+    gap: "Gemini handles the heavy lifting, so small teams don't have to.",
   },
 ];
 
-const comparison = [
-  { feature: "Verified sponsors (anti-scam trust)", yt: false, tt: false },
-  { feature: "Transparent creator rate cards", yt: false, tt: false },
-  { feature: "Fair-price + fit guidance for SMBs", yt: false, tt: false },
-  { feature: "AI contract & content review", yt: false, tt: false },
-  { feature: "Usable without an ads team", yt: false, tt: true },
+// How SponsorSync fits with the tools brands already trust — complementary,
+// not competitive.
+const stack = [
+  {
+    tag: "YouTube",
+    title: "Where your customers already are",
+    desc: "The home of trusted creators and the formats — long-form, Shorts — that drive real consideration for small brands.",
+  },
+  {
+    tag: "Gemini",
+    title: "The intelligence layer",
+    desc: "Matches creators to your brief, turns chats into clear terms, and reviews the delivered video for brand safety and disclosure.",
+  },
+  {
+    tag: "SponsorSync",
+    title: "Made for small businesses",
+    desc: "Brings it together in one workflow: verified sponsors, transparent rate cards, and guided deals — no ads team required.",
+  },
 ];
-
-function Cell({ on }) {
-  return on
-    ? <CheckIcon className="mx-auto text-success" size={16} />
-    : <span className="text-muted/40">—</span>;
-}
 
 export default function Home() {
   const { user, ready } = useAuth();
@@ -98,7 +103,7 @@ function Marketing() {
               <h3 className="mt-2 text-lg font-semibold">{p.title}</h3>
               <p className="mt-2 text-sm text-muted">{p.desc}</p>
               <p className="mt-4 border-t border-border pt-3 text-xs text-muted">
-                <span className="font-medium text-foreground">Why us:</span> {p.gap}
+                <span className="font-medium text-foreground">For SMBs:</span> {p.gap}
               </p>
             </Reveal>
           ))}
@@ -108,37 +113,28 @@ function Marketing() {
       {/* How it works (animated workflow) */}
       <HowItWorks />
 
-      {/* Comparison */}
+      {/* How it fits together — complementary to YouTube + Gemini */}
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <h2 className="text-2xl font-semibold tracking-tight">The gap we fill</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Built on the tools brands already trust</h2>
         <p className="mt-1 text-sm text-muted">
-          What YouTube&apos;s Creator Partnerships and TikTok both leave out for small businesses.
+          SponsorSync doesn&apos;t replace YouTube — it brings YouTube&apos;s reach and Gemini&apos;s intelligence together into one workflow small businesses can actually run.
         </p>
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full min-w-[560px] border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-border text-left">
-                <th className="py-3 font-medium text-muted">Capability</th>
-                <th className="px-4 py-3 text-center font-medium text-muted">YouTube</th>
-                <th className="px-4 py-3 text-center font-medium text-muted">TikTok</th>
-                <th className="px-4 py-3 text-center font-semibold text-brand">SponsorSync</th>
-              </tr>
-            </thead>
-            <tbody>
-              {comparison.map((row, i) => (
-                <Reveal as="tr" key={row.feature} delay={i * 90} className="border-b border-border">
-                  <td className="py-3">{row.feature}</td>
-                  <td className="px-4 py-3 text-center"><Cell on={row.yt} /></td>
-                  <td className="px-4 py-3 text-center"><Cell on={row.tt} /></td>
-                  <td className="bg-brand-soft/40 px-4 py-3 text-center font-semibold"><Cell on={true} /></td>
-                </Reveal>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {stack.map((s, i) => (
+            <Reveal key={s.tag} delay={i * 130} className="relative rounded-2xl border border-border bg-surface p-6">
+              <span className="text-xs font-semibold uppercase tracking-wide text-brand">{s.tag}</span>
+              <h3 className="mt-2 text-lg font-semibold">{s.title}</h3>
+              <p className="mt-2 text-sm text-muted">{s.desc}</p>
+              {i < stack.length - 1 && (
+                <span className="absolute -right-3 top-1/2 hidden -translate-y-1/2 text-border md:block" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </span>
+              )}
+            </Reveal>
+          ))}
         </div>
         <p className="mt-3 text-xs text-muted">
-          Comparison of YouTube Creator Partnerships vs TikTok Creator Marketplace, as of 2026. A check mark = capability offered to small advertisers today.
-          The SponsorSync column reflects features demonstrated in this prototype.
+          Reflects the workflow demonstrated in this prototype, built with the YouTube Data API and Gemini.
         </p>
       </section>
 

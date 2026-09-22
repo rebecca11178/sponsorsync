@@ -62,7 +62,7 @@ export default function SponsorProfile() {
             <span><span className="font-medium">Business verified</span> — company email <span className="text-muted">{currentSponsor.email}</span> confirmed.</span>
           </p>
           <p className="mt-3 text-xs text-muted">
-            The verified badge is what tells creators you&apos;re a real business, not a scam DM — the trust layer Google&apos;s Creator Partnerships doesn&apos;t provide.
+            The verified badge tells creators you&apos;re a real business, not a scam DM — a trust layer built specifically for small advertisers.
           </p>
         </div>
 
