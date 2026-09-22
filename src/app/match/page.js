@@ -6,6 +6,8 @@ import { compact, usd, scoreTone, startingPrice, bestPackageWithin } from "@/lib
 import { loadAllOverrides, mergePricing } from "@/lib/pricing";
 import Avatar from "@/components/Avatar";
 import GeminiProgress from "@/components/GeminiProgress";
+import { useAuth } from "@/components/AuthProvider";
+import GuestPromo from "@/components/GuestPromo";
 
 const STEPS = ["Business", "Goal", "Audience", "Budget", "Brand", "Results"];
 
@@ -20,6 +22,7 @@ const inputCls =
   "mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-brand";
 
 export default function MatchPage() {
+  const { user, ready } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     businessName: "",
@@ -92,6 +95,10 @@ export default function MatchPage() {
   // Client-side budget grouping so displayed prices honor creator-set overrides
   // and the same pricing rules as every other page (P0-3, P0-4).
   const groups = deriveGroups(form, results);
+
+  // Guests get a promotional pitch for AI Match, not the working wizard.
+  if (!ready) return <div className="min-h-[60vh]" />;
+  if (!user) return <GuestPromo variant="match" />;
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">

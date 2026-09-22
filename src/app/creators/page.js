@@ -6,10 +6,13 @@ import { creators } from "@/lib/mockData";
 import { compact, usd, scoreTone } from "@/lib/format";
 import { loadAllOverrides, mergePricing } from "@/lib/pricing";
 import Avatar from "@/components/Avatar";
+import { useAuth } from "@/components/AuthProvider";
+import GuestPromo from "@/components/GuestPromo";
 
 const tiers = ["All", "Nano", "Micro", "Mid-tier"];
 
 export default function CreatorsPage() {
+  const { user, ready } = useAuth();
   const [tier, setTier] = useState("All");
   const [maxPrice, setMaxPrice] = useState(10000);
   const [overrides, setOverrides] = useState({});
@@ -22,6 +25,10 @@ export default function CreatorsPage() {
       .map((c) => ({ ...c, rates: mergePricing(c, overrides).rates }))
       .filter((c) => (tier === "All" || c.tier === tier) && c.rates.dedicatedVideo <= maxPrice);
   }, [tier, maxPrice, overrides]);
+
+  // Guests get a promotional pitch for this feature, not the full directory.
+  if (!ready) return <div className="min-h-[60vh]" />;
+  if (!user) return <GuestPromo variant="creators" />;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
