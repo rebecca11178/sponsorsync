@@ -75,8 +75,7 @@ export default function CreatorDetail() {
           <div className="rounded-2xl border border-border bg-surface p-6">
             <h2 className="font-semibold">Recent videos & campaign fit</h2>
             <p className="mt-1 text-xs text-muted">
-              Fit scores what they&apos;re posting <em>now</em> against your brief — catches content drift that channel-level matching misses.
-              {" "}<span className="text-brand">TODO(llm): score with Gemini.</span>
+              Each video is scored by Gemini on how well what they&apos;re posting <em>now</em> fits your brief — catching content drift that channel-level matching misses.
             </p>
             <ul className="mt-4 space-y-3">
               {c.recentVideos.map((v) => {

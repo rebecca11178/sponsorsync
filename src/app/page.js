@@ -13,20 +13,20 @@ const pillars = [
   {
     tag: "Trust",
     title: "Verified sponsors",
-    desc: "Company-email verification on both sides. No more guessing if a brand deal — or a creator — is legit.",
-    gap: "Google's Creator Partnerships doesn't do this.",
+    desc: "Company-email verification on both sides, so there's no guessing whether a brand — or a creator — is legitimate.",
+    gap: "Google's Creator Partnerships doesn't offer this.",
   },
   {
     tag: "Transparency",
     title: "Clear rate cards",
-    desc: "Every creator lists prices by content type plus commercial-rights add-ons. Know what's fair before you ask.",
-    gap: "Neither YouTube nor TikTok publishes pricing.",
+    desc: "Every creator lists prices by content type, plus commercial-rights add-ons — so you know what's fair before you ask.",
+    gap: "Neither YouTube nor TikTok publishes creator pricing.",
   },
   {
     tag: "AI review",
     title: "Contract & content check",
-    desc: "Gemini summarizes chats into terms, then reviews the delivered video against your brief and legal claims.",
-    gap: "The manual, time-heavy step the hackathon calls out.",
+    desc: "Gemini turns the chat into clear terms, then reviews the delivered video against your brief, brand rules, and disclosure requirements.",
+    gap: "The manual, time-consuming step most tools leave to you.",
   },
 ];
 

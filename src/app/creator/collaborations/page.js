@@ -49,7 +49,7 @@ export default function CreatorCollaborations() {
     { label: "Earned", value: usd(earned), sub: `${mine.filter((d) => d.status === "completed").length} paid & closed` },
     { label: "Booked value", value: usd(booked), sub: "signed & in flight" },
     { label: "In progress", value: mine.filter((d) => ["chatroom", "contracted", "in_production"].includes(d.status)).length, sub: "active now" },
-    { label: "Awaiting approval", value: mine.filter((d) => d.status === "in_review").length, sub: "delivered, with brand" },
+    { label: "Awaiting approval", value: mine.filter((d) => d.status === "in_review").length, sub: "delivered, with the brand" },
   ];
 
   const rows = mine.filter(FILTERS.find((f) => f.key === filter).match);

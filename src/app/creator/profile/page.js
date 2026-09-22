@@ -50,7 +50,7 @@ export default function CreatorProfile() {
         <h1 className="text-2xl font-semibold tracking-tight">My profile &amp; pricing</h1>
         <Link href="/creator" className="text-sm text-muted hover:text-foreground">← Inbox</Link>
       </div>
-      <p className="mt-1 text-sm text-muted">Set your rates here — this is exactly what verified brands see when they view you.</p>
+      <p className="mt-1 text-sm text-muted">Set your rates here — this is exactly what verified brands see when they view your profile.</p>
 
       {/* Header card */}
       <div className="mt-6 flex flex-wrap items-start gap-4 rounded-2xl border border-border bg-surface p-6">

@@ -10,11 +10,11 @@ const CONTENT = {
     eyebrow: "Find creators",
     title: "Browse creators with prices on the table.",
     subtitle:
-      "SponsorSync is the only place small businesses see a creator's rate card by content type — integrated, dedicated, Shorts — plus commercial-rights add-ons, before they ever send a message.",
+      "SponsorSync is the only place where small businesses can see a creator's rate card by content type — integrated videos, dedicated videos, and Shorts — along with commercial-rights add-ons, before sending a single message.",
     bullets: [
-      { title: "Transparent rate cards", desc: "No back-and-forth DMs to learn a price. YouTube and TikTok never show you this." },
-      { title: "Verified, brand-safe creators", desc: "Every creator is channel-verified with a brand-safety score and a real track record." },
-      { title: "Filter to your budget", desc: "Narrow by tier and max rate so you only see creators you can actually afford." },
+      { title: "Transparent rate cards", desc: "No back-and-forth DMs just to learn a price — the number YouTube and TikTok never show you." },
+      { title: "Verified, brand-safe creators", desc: "Every creator is channel-verified, with a brand-safety score and a real track record." },
+      { title: "Filter to your budget", desc: "Narrow by tier and maximum rate, so you only see creators you can actually afford." },
     ],
     preview: <CreatorsPreview />,
   },
@@ -22,11 +22,11 @@ const CONTENT = {
     eyebrow: "AI Match",
     title: "Describe your campaign. Let Gemini build the shortlist.",
     subtitle:
-      "Answer a few questions about your business, goal, audience and budget. Gemini reads creators' recent videos and ranks the best-fit, best-value matches — with a brand-safety risk read on each.",
+      "Answer a few questions about your business, goal, audience, and budget. Gemini reads creators' recent videos and ranks the best-fit, best-value matches — with a brand-safety risk check on each.",
     bullets: [
-      { title: "Brief in, shortlist out", desc: "A guided 6-step brief — no marketing team or media plan required." },
+      { title: "Brief in, shortlist out", desc: "A guided six-step brief — no marketing team or media plan required." },
       { title: "Grounded fit scores", desc: "Matches are scored on real recent content, not follower count alone." },
-      { title: "Budget-aware picks", desc: "See the best package within your budget for every recommended creator." },
+      { title: "Budget-aware picks", desc: "For every recommended creator, see the best package within your budget." },
     ],
     preview: <MatchPreview />,
   },

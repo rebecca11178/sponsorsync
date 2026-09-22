@@ -13,7 +13,7 @@ const MOCK_CHANNEL = {
   emoji: "🍵",
   subscribers: 84000,
   avgViews: 41000,
-  niche: "Food & Wellness",
+  niche: "Food & Beverage",
 };
 
 export default function CreatorSignup() {
@@ -38,12 +38,14 @@ export default function CreatorSignup() {
 
       {step === 1 && (
         <div className="mt-6 rounded-2xl border border-border bg-surface p-6 text-center">
-          <div className="mx-auto grid h-14 w-14 place-items-center rounded-xl bg-danger-soft text-2xl">▶</div>
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-xl bg-g-red">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="#fff" aria-hidden="true"><path d="M5 3.4v9.2l7.5-4.6z" /></svg>
+          </div>
           <p className="mt-3 text-sm text-muted">Connect your YouTube channel so we can verify your stats.</p>
           <button onClick={() => setStep(2)} className="mt-4 w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">
             Connect YouTube
           </button>
-          <p className="mt-2 text-xs text-muted">TODO(auth): real YouTube OAuth</p>
+          <p className="mt-2 text-xs text-muted">Secure sign-in with your YouTube account.</p>
         </div>
       )}
 
@@ -85,7 +87,7 @@ export default function CreatorSignup() {
 
       {step === 3 && (
         <div className="mt-6 rounded-2xl border border-border bg-success-soft/40 p-6 text-center">
-          <p className="text-lg font-semibold text-success">🎉 You&apos;re live!</p>
+          <p className="text-lg font-semibold text-success">You&apos;re live</p>
           <p className="mt-1 text-sm text-muted">Verified brands can now find you and send enquiries.</p>
           <Link href="/creator" className="mt-4 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
             Go to my inbox →

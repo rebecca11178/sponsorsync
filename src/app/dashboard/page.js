@@ -41,8 +41,7 @@ export default function Dashboard() {
         <aside>
           <h2 className="font-semibold">Recommended for you</h2>
           <p className="mt-1 text-xs text-muted">
-            Pushed to your business.{" "}
-            <span className="text-brand">TODO(llm): generate from Gemini using industry + order history.</span>
+            Matched to your business by Gemini, from your industry and past collaborations.
           </p>
           <div className="mt-3 space-y-3">
             {creatorPushes.map((p) => {

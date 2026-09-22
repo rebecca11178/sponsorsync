@@ -12,7 +12,7 @@ import GuestPromo from "@/components/GuestPromo";
 const STEPS = ["Business", "Goal", "Audience", "Budget", "Brand", "Results"];
 
 const GOALS = [
-  { key: "purchase", label: "Purchase / sales", desc: "Someone buys your product, subscription or service", icon: "🛒" },
+  { key: "purchase", label: "Purchase / sales", desc: "Someone buys your product, subscription, or service", icon: "🛒" },
   { key: "leads", label: "Leads", desc: "A potential customer signs up or fills out a form", icon: "📝" },
   { key: "traffic", label: "Website traffic", desc: "Drive visits to a page on your site", icon: "🔗" },
   { key: "awareness", label: "Brand awareness", desc: "Reach a broad audience and get video views", icon: "📣" },

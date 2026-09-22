@@ -3,4 +3,4 @@
 export const APP_NAME = "SponsorSync";
 export const APP_TAGLINE = "Verified brand–creator sponsorships for small businesses";
 export const APP_PITCH =
-  "Google built the enterprise engine parts. We assemble them into one accessible car for SMBs — verified sponsors, transparent pricing, and AI-assisted contract & content review.";
+  "Google provides the enterprise-grade building blocks; we bring them together into one accessible platform for small businesses — verified sponsors, transparent pricing, and AI-assisted contract and content review.";

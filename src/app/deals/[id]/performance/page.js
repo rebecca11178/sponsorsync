@@ -36,8 +36,7 @@ export default function PerformancePage() {
       <BackLink href={`/deals/${deal.id}`} className="text-sm text-muted hover:text-foreground">← Back</BackLink>
       <h1 className="mt-4 text-2xl font-semibold tracking-tight">Campaign performance</h1>
       <p className="mt-1 text-sm text-muted">
-        {creator.name} · {deal.package}.{" "}
-        <span className="text-brand">TODO(api): pull from YouTube Data API + Google Ads.</span>
+        {creator.name} · {deal.package} · sample metrics for demonstration.
       </p>
 
       {!data ? (
