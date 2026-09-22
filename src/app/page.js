@@ -7,6 +7,7 @@ import WorkspaceHome from "@/components/WorkspaceHome";
 import HeroVisual from "@/components/HeroVisual";
 import AnimatedStats from "@/components/AnimatedStats";
 import HowItWorks from "@/components/HowItWorks";
+import Reveal from "@/components/Reveal";
 
 const pillars = [
   {
@@ -88,15 +89,15 @@ function Marketing() {
       {/* Pillars */}
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="grid gap-4 md:grid-cols-3">
-          {pillars.map((p) => (
-            <div key={p.title} className="rounded-2xl border border-border bg-surface p-6">
+          {pillars.map((p, i) => (
+            <Reveal key={p.title} delay={i * 130} className="rounded-2xl border border-border bg-surface p-6">
               <span className="text-xs font-semibold uppercase tracking-wide text-brand">{p.tag}</span>
               <h3 className="mt-2 text-lg font-semibold">{p.title}</h3>
               <p className="mt-2 text-sm text-muted">{p.desc}</p>
               <p className="mt-4 border-t border-border pt-3 text-xs text-muted">
                 <span className="font-medium text-foreground">Why us:</span> {p.gap}
               </p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -121,13 +122,13 @@ function Marketing() {
               </tr>
             </thead>
             <tbody>
-              {comparison.map((row) => (
-                <tr key={row.feature} className="border-b border-border">
+              {comparison.map((row, i) => (
+                <Reveal as="tr" key={row.feature} delay={i * 90} className="border-b border-border">
                   <td className="py-3">{row.feature}</td>
                   <td className="px-4 py-3 text-center"><Cell on={row.yt} /></td>
                   <td className="px-4 py-3 text-center"><Cell on={row.tt} /></td>
                   <td className="bg-brand-soft/40 px-4 py-3 text-center font-semibold"><Cell on={true} /></td>
-                </tr>
+                </Reveal>
               ))}
             </tbody>
           </table>
@@ -140,7 +141,7 @@ function Marketing() {
 
       {/* CTA band */}
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-        <div className="flex flex-col items-start justify-between gap-4 rounded-2xl bg-brand px-6 py-8 text-white sm:flex-row sm:items-center sm:px-10">
+        <Reveal className="flex flex-col items-start justify-between gap-4 rounded-2xl bg-brand px-6 py-8 text-white sm:flex-row sm:items-center sm:px-10">
           <div>
             <h2 className="text-xl font-semibold">Ready to run your first sponsorship?</h2>
             <p className="mt-1 text-sm text-white/80">Verify your business in under a minute.</p>
@@ -148,7 +149,7 @@ function Marketing() {
           <Link href="/sponsor/signup" className="rounded-lg bg-white px-5 py-3 text-sm font-semibold text-brand transition-colors hover:bg-white/90">
             Get verified
           </Link>
-        </div>
+        </Reveal>
       </section>
     </div>
   );
