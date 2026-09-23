@@ -13,8 +13,8 @@ export default function HeroVisual() {
       <div className="ss-blob ss-blob-b absolute" />
       <div className="ss-grain absolute inset-0" />
 
-      {/* Wide connection line across the banner */}
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1000 320" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      {/* Wide connection line across the banner (desktop only) */}
+      <svg className="absolute inset-0 hidden h-full w-full sm:block" viewBox="0 0 1000 320" fill="none" preserveAspectRatio="none" aria-hidden="true">
         <path id="ss-link" d="M150 210 C 340 210, 400 120, 500 120 C 600 120, 660 210, 850 210"
           stroke="rgba(255,255,255,0.45)" strokeWidth="2.5" strokeDasharray="7 8" className="ss-dash" />
         <circle r="5" fill="#fff" className="ss-pulse">
@@ -25,26 +25,26 @@ export default function HeroVisual() {
       </svg>
 
       {/* Centre: co-brand lockup + tagline */}
-      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center">
-        <div className="flex items-center gap-3 sm:gap-4">
-          {/* YouTube play badge */}
-          <span className="ss-yt grid h-11 w-16 place-items-center rounded-xl sm:h-12 sm:w-[76px]">
-            <svg width="22" height="22" viewBox="0 0 16 16" fill="#fff" aria-hidden="true"><path d="M5 3.4v9.2l7.5-4.6z" /></svg>
-          </span>
-          <span className="text-2xl font-semibold text-white/90 sm:text-3xl">×</span>
-          {/* SponsorSync mark + wordmark */}
-          <span className="flex items-center gap-2.5">
+      <div className="absolute left-1/2 top-1/2 flex w-full max-w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center px-4 text-center">
+        <div className="flex flex-col items-center gap-2.5 sm:flex-row sm:gap-4">
+          {/* icons row */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="ss-yt grid h-11 w-16 place-items-center rounded-xl sm:h-12 sm:w-[76px]">
+              <svg width="22" height="22" viewBox="0 0 16 16" fill="#fff" aria-hidden="true"><path d="M5 3.4v9.2l7.5-4.6z" /></svg>
+            </span>
+            <span className="text-2xl font-semibold text-white/90 sm:text-3xl">×</span>
             <span className="grid h-11 w-11 place-items-center rounded-xl bg-white text-lg font-bold text-brand sm:h-12 sm:w-12">S</span>
-            <span className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">SponsorSync</span>
-          </span>
+          </div>
+          {/* wordmark */}
+          <span className="text-3xl font-semibold tracking-tight text-white sm:text-3xl">SponsorSync</span>
         </div>
-        <p className="mt-3 text-sm font-medium uppercase tracking-[0.22em] text-white/80 sm:text-base">
+        <p className="mt-3 text-xs font-medium uppercase tracking-[0.2em] text-white/80 sm:text-base sm:tracking-[0.22em]">
           Verified creator sponsorships
         </p>
       </div>
 
-      {/* Centre sync badge with pulsing rings (sits on the link apex) */}
-      <div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 sm:top-[28%]">
+      {/* Centre sync badge with pulsing rings (sits on the link apex, desktop only) */}
+      <div className="absolute left-1/2 top-[28%] hidden -translate-x-1/2 -translate-y-1/2 sm:block">
         <span className="ss-ring absolute inset-0 rounded-full" />
         <span className="ss-ring ss-ring-2 absolute inset-0 rounded-full" />
         <span className="relative grid h-11 w-11 place-items-center rounded-full bg-white shadow-lg">
@@ -56,7 +56,7 @@ export default function HeroVisual() {
       </div>
 
       {/* Brand node (left) */}
-      <div className="ss-float-a absolute left-[4%] top-[60%] w-[240px] max-w-[42%]">
+      <div className="ss-float-a absolute left-[4%] top-[60%] hidden w-[240px] max-w-[42%] sm:block">
         <div className="rounded-xl border border-white/25 bg-white/15 p-3 backdrop-blur-md">
           <div className="flex items-center gap-2.5">
             <span className="grid h-9 w-9 place-items-center rounded-md bg-white text-sm font-bold text-brand">B</span>
@@ -69,7 +69,7 @@ export default function HeroVisual() {
       </div>
 
       {/* Creator node (right) */}
-      <div className="ss-float-b absolute right-[4%] top-[60%] w-[240px] max-w-[42%]">
+      <div className="ss-float-b absolute right-[4%] top-[60%] hidden w-[240px] max-w-[42%] sm:block">
         <div className="rounded-xl border border-white/25 bg-white/15 p-3 backdrop-blur-md">
           <div className="flex items-center gap-2.5">
             <span className="grid h-9 w-9 place-items-center rounded-md bg-g-red">
