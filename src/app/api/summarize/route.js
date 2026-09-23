@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getDeal } from "@/lib/mockData";
 import { generateJSON } from "@/lib/gemini";
 import { SUMMARIZE_SCHEMA, SUMMARIZE_SYSTEM, summarizePrompt } from "@/lib/ai/deal";
 
@@ -26,7 +27,8 @@ function mockTerms(messages) {
 }
 
 export async function POST(req) {
-  const { messages = [] } = await req.json();
+  const { messages = [], dealId } = await req.json();
+  const deal = dealId ? getDeal(dealId) : null;
 
   if (!messages.length) {
     return NextResponse.json({ terms: [], openQuestions: ["No messages to summarize yet."], source: "empty" });
@@ -34,12 +36,12 @@ export async function POST(req) {
 
   const { data, error } = await generateJSON({
     system: SUMMARIZE_SYSTEM,
-    prompt: summarizePrompt(messages),
+    prompt: summarizePrompt(messages, deal),
     schema: SUMMARIZE_SCHEMA,
   });
 
   if (!data?.terms?.length) {
-    return NextResponse.json({ terms: mockTerms(messages), openQuestions: [], source: "mock", ...(error ? { debug: error } : {}) });
+    return NextResponse.json({ terms: (deal?.terms || []).map((t) => ({ ...t, agreed: true })), openQuestions: deal?.terms?.length ? [] : ["AI unavailable right now - try again."], source: deal?.terms?.length ? "deal-record" : "unavailable", ...(error ? { debug: error } : {}) });
   }
 
   // De-duplicate labels (the chat panel keys rows by label).

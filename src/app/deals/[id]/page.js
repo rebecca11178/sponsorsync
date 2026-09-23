@@ -45,6 +45,7 @@ export default function DealChatroom() {
   const [messages, setMessages] = useState(deal?.messages || []);
   const [draft, setDraft] = useState("");
   const [terms, setTerms] = useState(null);
+  const [termsSource, setTermsSource] = useState(null);
   const [summarizing, setSummarizing] = useState(false);
 
   // Live deal head (package / price) — an accepted offer updates these.
@@ -111,10 +112,11 @@ export default function DealChatroom() {
       const res = await fetch("/api/summarize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: messages.filter((m) => m.text) }),
+        body: JSON.stringify({ messages: messages.filter((m) => m.text), dealId: deal.id }),
       });
       const data = await res.json();
       setTerms(data.terms);
+      setTermsSource(data.source);
     } finally {
       setSummarizing(false);
     }
@@ -267,6 +269,7 @@ export default function DealChatroom() {
               <GeminiProgress className="mt-3" stages={["Reading the conversation…", "Extracting agreed terms…", "Flagging open questions…"]} note="Gemini is reading the chat — a few seconds." />
             )}
 
+            {termsSource === "deal-record" && (<p className="mt-3 rounded-lg bg-warning-soft px-3 py-2 text-xs text-warning">Gemini is unavailable. These are the terms already saved on this deal, not a summary of this chat.</p>)}
             {terms && (
               <dl className="mt-4 space-y-2 text-sm">
                 {terms.map((t) => (
