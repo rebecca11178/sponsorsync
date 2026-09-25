@@ -10,12 +10,19 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
 
-  // Load persisted session on mount (per-browser convenience only).
-  // Re-resolve from ACCOUNTS by id so account edits (e.g. a rename) always win
-  // over the stale snapshot saved at login time.
+  // Session lives in sessionStorage, NOT localStorage: a brand-new visit
+  // (new tab, or reopening the link) always starts logged OUT on the landing
+  // page, so first-time viewers get the marketing home. Within the same tab a
+  // reload keeps the session, so a live demo isn't interrupted.
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(KEY);
+      // Clear any legacy persisted login so old sessions never auto-resume.
+      localStorage.removeItem(KEY);
+    } catch {
+      /* ignore */
+    }
+    try {
+      const raw = sessionStorage.getItem(KEY);
       if (raw) {
         const saved = JSON.parse(raw);
         const fresh = ACCOUNTS.find((a) => a.id === saved.id);
@@ -39,7 +46,7 @@ export function AuthProvider({ children }) {
     delete safe.password;
     setUser(safe);
     try {
-      localStorage.setItem(KEY, JSON.stringify(safe));
+      sessionStorage.setItem(KEY, JSON.stringify(safe));
     } catch {
       /* ignore */
     }
@@ -48,7 +55,7 @@ export function AuthProvider({ children }) {
   function logout() {
     setUser(null);
     try {
-      localStorage.removeItem(KEY);
+      sessionStorage.removeItem(KEY);
     } catch {
       /* ignore */
     }
